@@ -12,7 +12,7 @@ import java.util.List;
 
 public class SaveSample {
     //ArrayList<String> sampleString = new ArrayList<>();
-    ToDoList sampleToDoList = new ToDoList();
+    public ToDoList sampleToDoList = new ToDoList();
 
     public SaveSample() throws IOException, ParseException {
         //sampleToDoList = new ToDoList();
