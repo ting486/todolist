@@ -1,36 +1,41 @@
-package ui;
-
-import main.model.ToDoList;
+package main.model;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
-public class Main {
-/*
-    private ArrayList<Entry> toDoList;
-    private ArrayList<Entry> doneList;
+
+
+public class ToDoList implements Saveable, Loadable {
+
+    public ArrayList<Entry> toDoList;
+    public ArrayList<Entry> doneList;
     private Scanner scanner;
 
-    // constructor
+
+    // EFFECTS: constructs a new ToDoList
     public ToDoList() throws ParseException, IOException {
-        toDoList = new ArrayList<>();
-        doneList = new ArrayList<>();
+        toDoList = new ArrayList<Entry>();
+        doneList = new ArrayList<Entry>();
         scanner = new Scanner(System.in);
-        processOperations();
+        //run();
     }
 
 
     // EFFECTS: directs the user to corresponding to-do list operations (adding an item, crossing off an entry,
     //          displaying the list or quitting the program) depending on the user input
-    private void processOperations() throws ParseException, IOException {
-
+    public void run() throws ParseException, IOException {
+        //thisToDoList = new ToDoList();
         while (true) {
-            saveToFile();
+            loadFile();
 
-            System.out.println("What would you like to do today?");
-            System.out.println(" 1: add a to-do list item \r\n 2: cross off an item \r\n "
-                    + "3: show all the items \r\n 4: quit");
-            System.out.println("Enter the number: ");
+            System.out.println("What would you like to do today? \r\n 1: add a to-do list item \r\n "
+                    + "2: cross off an item \r\n 3: show all the items \r\n 4: quit \r\n Enter the number: ");
             String operation = scanner.nextLine();
 
             if (operation.equals("4")) {
@@ -42,6 +47,8 @@ public class Main {
             } else if (operation.equals("3")) {
                 operationDisplay();
             }
+
+            //saveToFile();
         }
     }
 
@@ -53,7 +60,7 @@ public class Main {
         Entry entry = new Entry();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        System.out.println("Please enter the content: (do NOT use the symbol '|')");
+        System.out.println("Please enter the content: (do NOT use the symbol '==')");
         entry.setContent(scanner.nextLine());
         System.out.println("When is it due? Enter the date in the form: dd/MM/yyyy");
         entry.setDue(formatter.parse(scanner.nextLine()));
@@ -83,7 +90,7 @@ public class Main {
                 entryNum = scanner.nextInt();
             }
 
-            toDoList.get(entryNum).setCompletion(true);
+            toDoList.get(entryNum).setStatus(true);
             doneList.add(toDoList.get(entryNum));
             toDoList.remove(entryNum);
 
@@ -96,7 +103,7 @@ public class Main {
 
     // EFFECTS: displays both do-list list and crossed-off list
     private void operationDisplay() throws IOException, ParseException {
-        loadFile();
+        //loadFile();
         System.out.println("To-do list: ");
         operationDisplayTodo();
         System.out.println("Crossed-off list: ");
@@ -125,71 +132,63 @@ public class Main {
             }
         }
     }
-*/
-
-    public static void main(String[] args) throws ParseException, IOException {
-        ToDoList tryThisList = new ToDoList();
-        tryThisList.run();
-    }
 
 
-
-/*
 
     @Override
     public void saveToFile() throws IOException {
-        List<String> lines = new ArrayList<>();
-        PrintWriter writer = new PrintWriter("file.txt","UTF-8");
+        PrintWriter writer = new PrintWriter("./data/listData.txt","UTF-8");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        //writer.println("To-do list:");
-        for (int i = 0; i < toDoList.size(); i++) {
-            //lines.add(i + ": " + toDoList.get(i).getContent() + " is due on " + toDoList.get(i).getDue()
-            //        + ". " + toDoList.get(i).completionStatus(toDoList.get(i).getCompletion()) + "\r\n");
-            writer.println(i + "|" + toDoList.get(i).getContent() + "|" + toDoList.get(i).getDue()
-                    + "|" + toDoList.get(i).completionStatus(toDoList.get(i).getCompletion()));
+        if (toDoList.size() != 0) {
+            for (int i = 0; i < toDoList.size(); i++) {
+                Entry toDoEntry = toDoList.get(i);
+                writer.println(i + "==" + toDoEntry.getContent() + "==" + formatter.format(toDoEntry.getDue())
+                        + "==" + toDoEntry.getStatus());
+            }
         }
-        //writer.println("Crossed-off list:");
-        for (int i = 0; i < doneList.size(); i++) {
-            //lines.add(i + ": " + doneList.get(i).getContent() + " is due on " + doneList.get(i).getDue()
-             //       + ". " + doneList.get(i).completionStatus(doneList.get(i).getCompletion()) + "\r\n");
-            int j = i + 1000;
-            writer.println(j + "|" + doneList.get(i).getContent() + "|" + doneList.get(i).getDue()
-                    + "|" + doneList.get(i).completionStatus(doneList.get(i).getCompletion()));
+        if (doneList.size() != 0) {
+            for (int i = 0; i < doneList.size(); i++) {
+                //int j = i + 1000;
+                Entry doneEntry = doneList.get(i);
+                writer.println(Integer.toString(i + 1000) + "==" + doneEntry.getContent() + "=="
+                        + formatter.format(doneEntry.getDue()) + "==" + doneEntry.getStatus());
+            }
         }
-
         writer.close();
     }
 
 
+
     @Override
     public void loadFile() throws IOException, ParseException {
-        List<String> lines = Files.readAllLines(Paths.get("file.text"));
+        List<String> lines = Files.readAllLines(Paths.get("./data/listData.txt"));
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        toDoList.clear();
+        doneList.clear();
 
         for (String line : lines) {
-            //if (!(line == "To-do list:") && !(line == "Crossed-off list:")) {
-            int indexNum = Integer.parseInt(splitByPart(line).get(0));
-            //String content = splitByPart(line).get(1);
-            //Date due = formatter.parse(splitByPart(line).get(2));
-            //Boolean completion = Boolean.parseBoolean(splitByPart(line).get(3));
+            ArrayList<String> partsOfLine = splitByPart(line);
             Entry entry = new Entry();
-            entry.setContent(splitByPart(line).get(1));
-            entry.setDue(formatter.parse(splitByPart(line).get(2)));
-            entry.setCompletion(Boolean.parseBoolean(splitByPart(line).get(3)));
+
+            int indexNum = Integer.parseInt(partsOfLine.get(0));
+            entry.setContent(partsOfLine.get(1));
+            entry.setDue(formatter.parse(partsOfLine.get(2)));
+            entry.setStatus(Boolean.parseBoolean(partsOfLine.get(3)));
             if (indexNum < 1000) {
                 toDoList.add(entry);
             } else {
                 doneList.add(entry);
             }
-            //}
         }
     }
 
 
+
     public static ArrayList<String> splitByPart(String line) {
-        String[] splits = line.split("|");
+        String[] splits = line.split("==");
         return new ArrayList<>(Arrays.asList(splits));
     }
 
- */
+
 }
