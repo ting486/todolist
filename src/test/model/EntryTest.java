@@ -49,10 +49,10 @@ public class EntryTest {
 
     @Test
     public void testSetCompletion() {
-        assertEquals(false, entry.getCompletion());
+        assertEquals(false, entry.getStatus());
 
-        entry.setCompletion(COMPLETION);
-        assertEquals(true, entry.getCompletion());
+        entry.setStatus(COMPLETION);
+        assertEquals(true, entry.getStatus());
     }
 
 
@@ -63,7 +63,7 @@ public class EntryTest {
         assertEquals(CONTENT + " is due on " + formatter.format(DUE) + ". Not completed :(",
                 entry.printEntry());
 
-        entry.setCompletion(COMPLETION);
+        entry.setStatus(COMPLETION);
         assertEquals(CONTENT + " is due on " + formatter.format(DUE) + ". Completed!",
                 entry.printEntry());
     }

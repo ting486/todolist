@@ -7,14 +7,14 @@ import java.util.Date;
 public class Entry {
     private String content;
     private Date due;
-    private Boolean completion;
+    private Boolean status;
     //private Category category;
 
     // constructor
     public Entry() {
         this.content = null;
         this.due = null;
-        this.completion = false;
+        this.status = false;
     }
 
     // MODIFIES: this
@@ -34,8 +34,8 @@ public class Entry {
 
     // MODIFIES: this
     // EFFECTS: sets the completion status of the entry
-    public void setCompletion(Boolean completion) {
-        this.completion = completion;
+    public void setStatus(Boolean status) {
+        this.status = status;
         /*
          if (completion == true) {
          System.out.println("Completed!");
@@ -56,7 +56,7 @@ public class Entry {
         return due;
     }
 
-    /***
+    /*
      public void getDue(Date due) {
      SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
      System.out.println("It is due on " + formatter.format(due));
@@ -64,67 +64,30 @@ public class Entry {
      ***/
 
     // EFFECTS: get the completion status of the entry (in boolean form)
-    public Boolean getCompletion() {
-        return completion;
+    public Boolean getStatus() {
+        return status;
     }
 
-    /*****
-     // EFFECTS: describes the completion status in words
-     public String completionStatus(Boolean completion) {
-     if (completion == true) {
-     return ("Completed!");
-     } else {
-     return ("Not completed :(");
-     }
-     }
-     ****/
+
+    // EFFECTS: describes the completion status in words
+    public String statusStr(Boolean status) {
+        if (status == true) {
+            return ("Completed!");
+        } else {
+            return ("Not completed :(");
+        }
+    }
+
 
 
     // EFFECTS: prints out the info of a to-do entry in the form of a sentence
     public String printEntry() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        if (completion == true) {
+        if (status == true) {
             return (content + " is due on " + formatter.format((due)) + ". Completed!");
         } else {
             return (content + " is due on " + formatter.format((due)) + ". Not completed :(");
         }
     }
-
-
-
-    /*
-     public static void main(String[] args) throws ParseException {
-
-     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-     //String strDue = formatter.format(new Date());
-     //System.out.println("strDue: " + strDue);
-     /**
-     try {
-     Date datee = formatter.parse("20/05/2020");
-     System.out.println("Try date: " + datee);
-     } catch (ParseException e) {
-     e.printStackTrace();
-     } **/
-
-    /*
-     Entry cpsc = new Entry();
-
-     // a sample entry
-     cpsc.setContent("CPSC project deliverable 1");
-     //cpsc.setDue(new Date(00, 00, 21));
-     cpsc.setDue(formatter.parse("13/11/2019"));
-     cpsc.setCompletion(false);
-
-     //System.out.println("test: " + formatter.format(formatter.parse("20/01/2021")));
-
-     System.out.println(cpsc.content + " is due on "
-     + formatter.format((cpsc.due)) + " (dd/MM/yyyy). "
-     + cpsc.completionStatus(cpsc.completion));    //content, due date & completion status in one sent.
-     }
-
-     */
-
-
-
 }
