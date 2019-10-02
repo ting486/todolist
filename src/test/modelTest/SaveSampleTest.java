@@ -1,8 +1,8 @@
 package modelTest;
 
-import main.model.Entry;
-import main.model.SaveSample;
-import main.model.ToDoList;
+import model.Entry;
+import model.SaveSample;
+import model.ToDoList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

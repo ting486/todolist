@@ -1,4 +1,4 @@
-package main.model;
+package model;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ToDoList implements Saveable, Loadable {
 
-    public ArrayList<Entry> toDoList;
+    public List<Entry> toDoList;
     public ArrayList<Entry> doneList;
     private Scanner scanner;
 

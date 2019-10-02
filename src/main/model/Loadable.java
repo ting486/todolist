@@ -1,4 +1,4 @@
-package main.model;
+package model;
 
 import java.io.IOException;
 import java.text.ParseException;

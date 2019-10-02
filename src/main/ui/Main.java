@@ -1,6 +1,6 @@
 package ui;
 
-import main.model.ToDoList;
+import model.ToDoList;
 
 import java.io.IOException;
 import java.text.ParseException;
