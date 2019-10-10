@@ -1,5 +1,7 @@
 package model;
 
+import ui.ToDoList;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,33 +12,88 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LoadSample {
-    ArrayList<String> listOfString = new ArrayList<>();
-    ToDoList sampleToDoList = new ToDoList();
+    //ArrayList<String> listOfString = new ArrayList<>();
+    ToDoList sampleToDoItems = new ToDoList();
 
     public LoadSample() throws IOException, ParseException {
     }
 
+    /*
     public ToDoList load() throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get("./data/testFileLoad.txt"));
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        sampleToDoList.toDoList.clear();
-        sampleToDoList.doneList.clear();
+        sampleToDoItems.toDoList.clear();
+        sampleToDoItems.doneList.clear();
 
         for (String line : lines) {
             ArrayList<String> partsOfLine = splitByPart(line);
-            Entry entry = new Entry();
+            RegularItem regularItem = new RegularItem();
+            //UrgentItem urgentItem = new UrgentItem();
 
             int indexNum = Integer.parseInt(partsOfLine.get(0));
-            entry.setContent(partsOfLine.get(1));
-            entry.setDue(formatter.parse(partsOfLine.get(2)));
-            entry.setStatus(Boolean.parseBoolean(partsOfLine.get(3)));
+            regularItem.setContent(partsOfLine.get(1));
+            regularItem.setDue(formatter.parse(partsOfLine.get(2)));
+            regularItem.setStatus(Boolean.parseBoolean(partsOfLine.get(3)));
             if (indexNum < 1000) {
-                sampleToDoList.toDoList.add(entry);
+                sampleToDoItems.toDoList.add(regularItem);
             } else {
-                sampleToDoList.doneList.add(entry);
+                sampleToDoItems.doneList.add(regularItem);
             }
         }
-        return sampleToDoList;
+        return sampleToDoItems;
+    }
+     */
+
+    public ToDoList loadFile() throws IOException, ParseException {
+        List<String> lines = Files.readAllLines(Paths.get("./data/testFileLoad.txt"));
+        //SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        sampleToDoItems.toDoItems.clear();
+        sampleToDoItems.doneItems.clear();
+
+        for (String line : lines) {
+            ArrayList<String> partsOfLine = splitByPart(line);
+            Item regularItem = new RegularItem();
+            Item urgentItem = new UrgentItem();
+
+            if (Integer.parseInt(partsOfLine.get(0)) < 1000) {
+                loadToToDo(partsOfLine);
+            } else {
+                loadToDone(partsOfLine);
+            }
+        }
+        return sampleToDoItems;
+    }
+
+    public void loadToToDo(ArrayList<String> partsOfLine) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        RegularItem regularItem = new RegularItem();
+        UrgentItem urgentItem = new UrgentItem();
+        Boolean status = Boolean.parseBoolean(partsOfLine.get(3));
+        Boolean urgency = Boolean.parseBoolean(partsOfLine.get(4));
+
+        if (urgency == true) {
+            urgentItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
+            sampleToDoItems.toDoItems.add(urgentItem);
+        } else {
+            regularItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
+            sampleToDoItems.toDoItems.add(regularItem);
+        }
+    }
+
+    public void loadToDone(ArrayList<String> partsOfLine) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Item regularItem = new RegularItem();
+        Item urgentItem = new UrgentItem();
+        Boolean status = Boolean.parseBoolean(partsOfLine.get(3));
+        Boolean urgency = Boolean.parseBoolean(partsOfLine.get(4));
+
+        if (urgency == true) {
+            urgentItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
+            sampleToDoItems.doneItems.add(urgentItem);
+        } else {
+            regularItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
+            sampleToDoItems.doneItems.add(regularItem);
+        }
     }
 
     public static ArrayList<String> splitByPart(String line) {

@@ -1,6 +1,6 @@
-package modelTest;
+package ui;
 
-import model.ToDoList;
+import ui.ToDoList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

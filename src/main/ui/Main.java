@@ -1,11 +1,15 @@
 package ui;
 
-import model.ToDoList;
-
 import java.io.IOException;
 import java.text.ParseException;
 
 public class Main {
+    public static void main(String[] args) throws ParseException, IOException {
+        ToDoList tryThisList = new ToDoList();
+        tryThisList.run();
+    }
+
+
 /*
     private ArrayList<Entry> toDoList;
     private ArrayList<Entry> doneList;
@@ -125,16 +129,6 @@ public class Main {
             }
         }
     }
-*/
-
-    public static void main(String[] args) throws ParseException, IOException {
-        ToDoList tryThisList = new ToDoList();
-        tryThisList.run();
-    }
-
-
-
-/*
 
     @Override
     public void saveToFile() throws IOException {
@@ -160,7 +154,6 @@ public class Main {
         writer.close();
     }
 
-
     @Override
     public void loadFile() throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get("file.text"));
@@ -184,7 +177,6 @@ public class Main {
             //}
         }
     }
-
 
     public static ArrayList<String> splitByPart(String line) {
         String[] splits = line.split("|");

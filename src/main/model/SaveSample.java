@@ -1,5 +1,7 @@
 package model;
 
+import ui.ToDoList;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -12,10 +14,9 @@ import java.util.List;
 
 public class SaveSample {
     //ArrayList<String> sampleString = new ArrayList<>();
-    public ToDoList sampleToDoList = new ToDoList();
+    public ToDoList sampleToDoItems = new ToDoList();
 
     public SaveSample() throws IOException, ParseException {
-        //sampleToDoList = new ToDoList();
     }
 
 
@@ -25,46 +26,100 @@ public class SaveSample {
         PrintWriter writer = new PrintWriter("./data/testFileSave.txt","UTF-8");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        if (sampleToDoList.toDoList.size() != 0) {
-            for (int i = 0; i < sampleToDoList.toDoList.size(); i++) {
-                Entry toDoEntry = sampleToDoList.toDoList.get(i);
-                writer.println(i + "==" + toDoEntry.getContent() + "==" + formatter.format(toDoEntry.getDue())
-                        + "==" + toDoEntry.getStatus());
+        if (sampleToDoItems.toDoItems.size() != 0) {
+            for (int i = 0; i < sampleToDoItems.toDoItems.size(); i++) {
+                Item toDoItem = sampleToDoItems.toDoItems.get(i);
+                writer.println(i + "==" + toDoItem.getContent() + "==" + formatter.format(toDoItem.getDue())
+                        + "==" + toDoItem.getStatus() + "==" + toDoItem.getUrg());
             }
         }
-        if (sampleToDoList.doneList.size() != 0) {
-            for (int i = 0; i < sampleToDoList.doneList.size(); i++) {
-                //int j = i + 1000;
-                Entry doneEntry = sampleToDoList.doneList.get(i);
-                writer.println(Integer.toString(i + 1000) + "==" + doneEntry.getContent() + "=="
-                        + formatter.format(doneEntry.getDue()) + "==" + doneEntry.getStatus());
+        if (sampleToDoItems.doneItems.size() != 0) {
+            for (int i = 0; i < sampleToDoItems.doneItems.size(); i++) {
+                Item doneItem = sampleToDoItems.doneItems.get(i);
+                writer.println((i + 1000) + "==" + doneItem.getContent() + "=="
+                        + formatter.format(doneItem.getDue())
+                        + "==" + doneItem.getStatus() + "==" + doneItem.getUrg());
             }
         }
         writer.close();
     }
 
 
+    /*
     public ToDoList loadSavedSample() throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get("./data/testFileSave.txt"));
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        sampleToDoList.toDoList.clear();
-        sampleToDoList.doneList.clear();
+        sampleToDoItems.toDoList.clear();
+        sampleToDoItems.doneList.clear();
 
         for (String line : lines) {
             ArrayList<String> partsOfLine = splitByPart(line);
-            Entry entry = new Entry();
+            RegularItem regularItem = new RegularItem();
 
             int indexNum = Integer.parseInt(partsOfLine.get(0));
-            entry.setContent(partsOfLine.get(1));
-            entry.setDue(formatter.parse(partsOfLine.get(2)));
-            entry.setStatus(Boolean.parseBoolean(partsOfLine.get(3)));
+            regularItem.setContent(partsOfLine.get(1));
+            regularItem.setDue(formatter.parse(partsOfLine.get(2)));
+            regularItem.setStatus(Boolean.parseBoolean(partsOfLine.get(3)));
             if (indexNum < 1000) {
-                sampleToDoList.toDoList.add(entry);
+                sampleToDoItems.toDoList.add(regularItem);
             } else {
-                sampleToDoList.doneList.add(entry);
+                sampleToDoItems.doneList.add(regularItem);
             }
         }
-        return sampleToDoList;
+        return sampleToDoItems;
+    }
+     */
+
+    public ToDoList loadFile() throws IOException, ParseException {
+        List<String> lines = Files.readAllLines(Paths.get("./data/testFileSave.txt"));
+        //SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        sampleToDoItems.toDoItems.clear();
+        sampleToDoItems.doneItems.clear();
+
+        for (String line : lines) {
+            ArrayList<String> partsOfLine = splitByPart(line);
+            Item regularItem = new RegularItem();
+            Item urgentItem = new UrgentItem();
+
+            if (Integer.parseInt(partsOfLine.get(0)) < 1000) {
+                loadToToDo(partsOfLine);
+            } else {
+                loadToDone(partsOfLine);
+            }
+        }
+        return sampleToDoItems;
+    }
+
+    public void loadToToDo(ArrayList<String> partsOfLine) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        RegularItem regularItem = new RegularItem();
+        UrgentItem urgentItem = new UrgentItem();
+        Boolean status = Boolean.parseBoolean(partsOfLine.get(3));
+        Boolean urgency = Boolean.parseBoolean(partsOfLine.get(4));
+
+        if (urgency == true) {
+            urgentItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
+            sampleToDoItems.toDoItems.add(urgentItem);
+        } else {
+            regularItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
+            sampleToDoItems.toDoItems.add(regularItem);
+        }
+    }
+
+    public void loadToDone(ArrayList<String> partsOfLine) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Item regularItem = new RegularItem();
+        Item urgentItem = new UrgentItem();
+        Boolean status = Boolean.parseBoolean(partsOfLine.get(3));
+        Boolean urgency = Boolean.parseBoolean(partsOfLine.get(4));
+
+        if (urgency == true) {
+            urgentItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
+            sampleToDoItems.doneItems.add(urgentItem);
+        } else {
+            regularItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
+            sampleToDoItems.doneItems.add(regularItem);
+        }
     }
 
 

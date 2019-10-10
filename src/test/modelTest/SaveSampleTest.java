@@ -1,77 +1,109 @@
 package modelTest;
 
-import model.Entry;
+import model.RegularItem;
 import model.SaveSample;
-import model.ToDoList;
+import model.UrgentItem;
+import ui.ToDoList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SaveSampleTest {
     private SaveSample sampleInputList;
+    private SaveSample yooo;
     //private SaveSample expectedList;
 
     @BeforeEach
     public void runBefore() throws IOException, ParseException {
         sampleInputList = new SaveSample();
+        yooo = new SaveSample();
     }
 
     @Test
-    public void testSaveAndLoad() throws IOException, ParseException {
+    public void testSaveThisSample() throws IOException, ParseException {
         //ToDoList expectedList = new ToDoList();
-        ToDoList expectedList = sampleInputList.sampleToDoList;
+        ToDoList expectedList = sampleInputList.sampleToDoItems;
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        Entry toDo1 = new Entry();
-        toDo1.setContent("new 3");
-        toDo1.setDue(formatter.parse("12/12/2019"));
-        toDo1.setStatus(false);
+        RegularItem toDoReg1 = new RegularItem();
+        toDoReg1.setContent("new 3");
+        toDoReg1.setDue(formatter.parse("12/12/2019"));
+        //toDoReg1.setStatus(false);
 
-        Entry toDo2 = new Entry();
-        toDo2.setContent("random");
-        toDo2.setDue(formatter.parse("22/10/2019"));
-        toDo2.setStatus(false);
+        UrgentItem toDoUrg1 = new UrgentItem();
+        toDoUrg1.setContent("urgent 1");
+        toDoUrg1.setDue(formatter.parse("20/10/2019"));
+        //toDoUrg1.setStatus(false);
 
-        Entry done1 = new Entry();
-        done1.setContent("try1");
-        done1.setDue(formatter.parse("11/11/1111"));
-        done1.setStatus(true);
+        RegularItem toDoReg2 = new RegularItem();
+        toDoReg2.setContent("random random");
+        toDoReg2.setDue(formatter.parse("22/10/2019"));
+        //toDoReg2.setStatus(false);
 
-        Entry done2 = new Entry();
-        done2.setContent("try3 - to be deleted");
-        done2.setDue(formatter.parse("11/10/2019"));
-        done2.setStatus(true);
+        RegularItem doneReg1 = new RegularItem();
+        doneReg1.setContent("try1");
+        doneReg1.setDue(formatter.parse("11/11/1111"));
+        doneReg1.setStatus(true);
 
-        expectedList.toDoList.add(toDo1);
-        expectedList.toDoList.add(toDo2);
-        expectedList.doneList.add(done1);
-        expectedList.doneList.add(done2);
+        RegularItem doneReg2 = new RegularItem();
+        doneReg2.setContent("try3 - to be deleted");
+        doneReg2.setDue(formatter.parse("11/10/2019"));
+        doneReg2.setStatus(true);
+
+        UrgentItem doneUrg1 = new UrgentItem();
+        doneUrg1.setContent("this urgent item is done");
+        doneUrg1.setDue(formatter.parse("01/10/2019"));
+        doneUrg1.setStatus(true);
+
+        sampleInputList.sampleToDoItems.toDoItems.add(toDoReg1);
+        sampleInputList.sampleToDoItems.toDoItems.add(toDoReg2);
+        sampleInputList.sampleToDoItems.toDoItems.add(toDoUrg1);
+        sampleInputList.sampleToDoItems.doneItems.add(doneReg1);
+        sampleInputList.sampleToDoItems.doneItems.add(doneReg2);
+        sampleInputList.sampleToDoItems.doneItems.add(doneUrg1);
 
 
         sampleInputList.saveThisSample();
-        ToDoList sampleOutputList = sampleInputList.loadSavedSample();
+        ToDoList sampleOutputList = yooo.loadFile();
 
-        assertEquals(expectedList.toDoList.size(), sampleOutputList.toDoList.size());
-        if (expectedList.toDoList.size() != 0) {
-            for (int i = 0; i < expectedList.toDoList.size(); i++) {
-                String checkExp = expectedList.toDoList.get(i).printEntry();
-                String checkSamp = sampleOutputList.toDoList.get(i).printEntry();
-                assertEquals(checkExp, checkSamp);
+        assertEquals(expectedList.toDoItems.size(), sampleOutputList.toDoItems.size());
+        if (expectedList.toDoItems.size() != 0) {
+            for (int i = 0; i < expectedList.toDoItems.size(); i++) {
+                String expectedPrint = expectedList.toDoItems.get(i).printItem();
+                String samplePrint = sampleOutputList.toDoItems.get(i).printItem();
+                assertEquals(expectedPrint, samplePrint);
             }
         }
+        assertFalse(sampleOutputList.toDoItems.get(0).getUrg());
+        assertFalse(sampleOutputList.toDoItems.get(1).getUrg());
+        assertTrue(sampleOutputList.toDoItems.get(2).getUrg());
 
-        assertEquals(expectedList.doneList.size(), sampleOutputList.doneList.size());
-        if (expectedList.doneList.size() != 0) {
-            for (int i = 0; i < expectedList.doneList.size(); i++) {
-                String checkExp = expectedList.doneList.get(i).printEntry();
-                String checkSamp = sampleOutputList.doneList.get(i).printEntry();
-                assertEquals(checkExp, checkSamp);
+        assertEquals(expectedList.doneItems.size(), sampleOutputList.doneItems.size());
+        if (expectedList.doneItems.size() != 0) {
+            for (int i = 0; i < expectedList.doneItems.size(); i++) {
+                String expectedPrint = expectedList.doneItems.get(i).printItem();
+                String samplePrint = sampleOutputList.doneItems.get(i).printItem();
+                assertEquals(expectedPrint, samplePrint);
             }
         }
+        assertFalse(sampleOutputList.doneItems.get(0).getUrg());
+        assertFalse(sampleOutputList.doneItems.get(1).getUrg());
+        assertTrue(sampleOutputList.doneItems.get(2).getUrg());
+    }
+
+    @Test
+    public void testSplitByPart() {
+        ArrayList<String> listOfString = new ArrayList<>();
+        listOfString.add("qwertyuio");
+        listOfString.add("q12");
+        assertEquals(listOfString, sampleInputList.splitByPart("qwertyuio==q12"));
     }
 }
