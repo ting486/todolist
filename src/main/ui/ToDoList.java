@@ -1,5 +1,8 @@
 package ui;
 
+import exceptions.EmptyContentException;
+import exceptions.InvalidCrossingOffException;
+import exceptions.SpecialSymbolException;
 import model.*;
 
 import java.io.IOException;
@@ -21,6 +24,9 @@ public class ToDoList implements Saveable, Loadable {
     //public ArrayList<RegularItem> doneList;
     public ArrayList<Item> doneItems;
     private Scanner scanner;
+    private static final String OPERATION_GREETING = "What would you like to do? \r\n 1: add a regular item \r\n "
+            + "2: add an urgent item \r\n "
+            + "3: cross off an item \r\n 4: show all the items \r\n 5: quit \r\n Enter the number: ";
 
 
     // EFFECTS: constructs a new ToDoList
@@ -38,9 +44,7 @@ public class ToDoList implements Saveable, Loadable {
     public void run() throws ParseException, IOException {
         while (true) {
             loadFile();
-
-            System.out.println("What would you like to do? \r\n 1: add a regular item \r\n 2: add an urgent item \r\n "
-                    + "3: cross off an item \r\n 4: show all the items \r\n 5: quit \r\n Enter the number: ");
+            System.out.println(OPERATION_GREETING);
             String operation = scanner.nextLine();
 
             if (operation.equals("5")) {
@@ -53,9 +57,13 @@ public class ToDoList implements Saveable, Loadable {
                 operationMarkCompleted();
             } else if (operation.equals("4")) {
                 operationDisplay();
+            } else {
+                System.out.println("Invalid choice of operation. Try again.");
             }
         }
     }
+
+
 
 
     // REQUIRES: toDoList.size() < 1000;
@@ -65,15 +73,68 @@ public class ToDoList implements Saveable, Loadable {
     private void operationAddRegular() throws ParseException, IOException {
         RegularItem regularItem = new RegularItem();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        //Boolean isItValid = false;
 
         System.out.println("Please enter the content: (do NOT use the symbol '==')");
-        regularItem.setContent(scanner.nextLine());
+        String inputContent = validInputContent();
+        regularItem.setContent(inputContent);
         System.out.println("When is it due? Enter the date in the form: dd/MM/yyyy");
-        regularItem.setDue(formatter.parse(scanner.nextLine()));
+        /*
+        String inputDateStr = scanner.nextLine();
+        while (validateInputDateStr(inputDateStr) == false) {
+            //isItValid = validateDateStr(dateStr);
+            inputDateStr = scanner.nextLine();
+            validateInputDateStr(inputDateStr);
+        }
+         */
+        String inputDateStr = validInputDateStr();
+        regularItem.setDue(formatter.parse(inputDateStr));
 
         toDoItems.add(regularItem);
         saveToFile();
     }
+
+    // EFFECTS: check whether inputDateStr is valid (in dd/MM/yyyy form, which can be parsed correctly)
+    public String validInputDateStr() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String inputDateStr;
+        while (true) {
+            try {
+                inputDateStr = scanner.nextLine();
+                formatter.parse(inputDateStr);
+                break;
+            } catch (ParseException e) {
+                System.out.println("Incorrect date format. Try again:");
+                //scanner.next();
+            }
+        }
+        return inputDateStr;
+    }
+
+    // EFFECTS: check whether inputContent is valid (not null or empty)
+    public String validInputContent() {
+        String inputContent;
+        while (true) {
+            try {
+                //System.out.println("Please enter the content: (do NOT use the symbol '==')");
+                inputContent = scanner.nextLine();
+                if (inputContent == null || inputContent.isEmpty()) {
+                    throw new EmptyContentException();
+                } else if (inputContent.contains("==")) {
+                    throw new SpecialSymbolException();
+                }
+                break;
+            } catch (EmptyContentException e) {
+                System.out.println("Content cannot be empty. Try again: ");
+                scanner.next();
+            } catch (SpecialSymbolException e) {
+                System.out.println("Content cannot contain the symbol '=='. Try again: ");
+            }
+        }
+        //System.out.println("The returned input content is: " + inputContent);
+        return inputContent;
+    }
+
 
     // REQUIRES: toDoList.size() < 1000
     // MODIFIES: this
@@ -83,9 +144,20 @@ public class ToDoList implements Saveable, Loadable {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         System.out.println("Please enter the content: (do NOT use the symbol '==')");
-        urgentItem.setContent(scanner.nextLine());
+        /*
+        try {
+            validInputContent(inputContent);
+        } catch (InvalidContentException e) {
+            System.out.println("Content cannot be empty. Re-enter:");
+            inputContent = scanner.nextLine();
+        }
+         */
+        String inputContent = validInputContent();
+        urgentItem.setContent(inputContent);
+
         System.out.println("When is it due? Enter the date in the form: dd/MM/yyyy");
-        urgentItem.setDue(formatter.parse(scanner.nextLine()));
+        String inputDateStr = validInputDateStr();
+        urgentItem.setDue(formatter.parse(inputDateStr));
 
         toDoItems.add(urgentItem);
         saveToFile();
@@ -103,12 +175,12 @@ public class ToDoList implements Saveable, Loadable {
             System.out.println("You have no items to delete.");
         } else {
             System.out.println("Which entry would you like to delete? Enter the entry number: ");
-            entryNum = scanner.nextInt();
-
-            while (entryNum >= toDoItems.size() || entryNum <  0) {
+            //entryNum = scanner.nextInt();
+            /* while (entryNum >= toDoItems.size() || entryNum <  0) {
                 System.out.println("Please enter a valid number: ");
                 entryNum = scanner.nextInt();
-            }
+            } */
+            entryNum = getValidEntryNum();
 
             toDoItems.get(entryNum).setStatus(true);
             doneItems.add(toDoItems.get(entryNum));
@@ -117,6 +189,36 @@ public class ToDoList implements Saveable, Loadable {
             saveToFile();
         }
     }
+
+    public int getValidEntryNum() {
+        int entryNum;
+        while (true) {
+            try {
+                //System.out.println("Which entry would you like to delete? Enter the entry number: ");
+                entryNum = scanner.nextInt();
+                //validateCrossingOffOperation(entryNum);
+                if (entryNum >= toDoItems.size() || entryNum <  0) {
+                    throw new InvalidCrossingOffException();
+                }
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("This is not a number. Try again:");
+                scanner.next();
+            } catch (InvalidCrossingOffException e) {
+                System.out.println("Entered number is out of range. Try again:");
+                //scanner.next();
+            }
+        }
+        return entryNum;
+    }
+
+    /*
+    public void validateCrossingOffOperation(int entryNum) throws InvalidCrossingOffException {
+        if (entryNum >= toDoItems.size() || entryNum <  0) {
+            throw new InvalidCrossingOffException();
+        }
+    }
+     */
 
     // EFFECTS: displays both do-list list and crossed-off list
     private void operationDisplay() throws IOException, ParseException {

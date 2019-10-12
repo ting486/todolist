@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.EmptyContentException;
+
 import java.util.Date;
 
 
@@ -25,7 +27,7 @@ public class RegularItem extends Item {
         super.setContent(content);
     }
 
-    // REQUIRES: due > today
+
     // MODIFIES: this
     // EFFECTS: sets the due date of the item
     @Override
