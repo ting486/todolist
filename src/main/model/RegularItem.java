@@ -1,7 +1,5 @@
 package model;
 
-import exceptions.EmptyContentException;
-
 import java.util.Date;
 
 
@@ -20,6 +18,7 @@ public class RegularItem extends Item {
         return  "This is regular";
     }
 
+    /********
     // MODIFIES: this
     // EFFECTS: sets the content of the item
     @Override
@@ -78,4 +77,5 @@ public class RegularItem extends Item {
     public String printItem() {
         return super.printItem();
     }
+    ***********/
 }

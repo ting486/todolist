@@ -1,6 +1,6 @@
 package exceptionsTest;
 
-import exceptions.InvalidCrossingOffException;
+import model.exceptions.InvalidCrossingOffException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ui.ToDoList;

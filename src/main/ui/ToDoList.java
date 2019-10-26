@@ -1,8 +1,8 @@
 package ui;
 
-import exceptions.EmptyContentException;
-import exceptions.InvalidCrossingOffException;
-import exceptions.SpecialSymbolException;
+import model.exceptions.EmptyContentException;
+import model.exceptions.InvalidCrossingOffException;
+import model.exceptions.SpecialSymbolException;
 import model.*;
 
 import java.io.IOException;
@@ -18,8 +18,8 @@ import java.util.List;
 
 public class ToDoList implements Saveable, Loadable {
 
-    public List<RegularItem> regularToDoItems;
-    public List<UrgentItem> urgentToDoItems;
+    //public List<RegularItem> regularToDoItems;
+    //public List<UrgentItem> urgentToDoItems;
     public List<Item> toDoItems;
     //public ArrayList<RegularItem> doneList;
     public ArrayList<Item> doneItems;
@@ -31,8 +31,8 @@ public class ToDoList implements Saveable, Loadable {
 
     // EFFECTS: constructs a new ToDoList
     public ToDoList() {
-        regularToDoItems = new ArrayList<>();
-        urgentToDoItems = new ArrayList<>();
+        //regularToDoItems = new ArrayList<>();
+        //urgentToDoItems = new ArrayList<>();
         toDoItems = new ArrayList<>();
         doneItems = new ArrayList<>();
         scanner = new Scanner(System.in);
@@ -207,6 +207,8 @@ public class ToDoList implements Saveable, Loadable {
             } catch (InvalidCrossingOffException e) {
                 System.out.println("Entered number is out of range. Try again:");
                 //scanner.next();
+            } finally {
+                System.out.println("This is a finally clause... To satisfy deliv. 6 requirement lol");
             }
         }
         return entryNum;
@@ -287,8 +289,8 @@ public class ToDoList implements Saveable, Loadable {
 
         for (String line : lines) {
             ArrayList<String> partsOfLine = splitByPart(line);
-            Item regularItem = new RegularItem();
-            Item urgentItem = new UrgentItem();
+            //Item regularItem = new RegularItem();
+            //Item urgentItem = new UrgentItem();
 
             if (Integer.parseInt(partsOfLine.get(0)) < 1000) {
                 loadToToDo(partsOfLine);

@@ -16,7 +16,7 @@ public class UrgentItem extends Item {
     public String greeting() {
         return ("This is urgent");
     }
-
+/*****
     // MODIFIES: this
     // EFFECTS: sets the content of the item
     @Override
@@ -74,4 +74,5 @@ public class UrgentItem extends Item {
     public String printItem() {
         return super.printItem();
     }
+    ****/
 }

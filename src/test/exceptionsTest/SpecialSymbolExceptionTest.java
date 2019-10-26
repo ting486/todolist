@@ -1,6 +1,6 @@
 package exceptionsTest;
 
-import exceptions.EmptyContentException;
+import model.exceptions.SpecialSymbolException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ui.ToDoList;
@@ -20,7 +20,7 @@ public class SpecialSymbolExceptionTest {
         try {
             validInputContent("fjiasfja==fsfs");
             fail("InvalidContentException was not thrown");
-        } catch (exceptions.SpecialSymbolException e) {
+        } catch (SpecialSymbolException e) {
             // expected
         }
     }
@@ -29,15 +29,15 @@ public class SpecialSymbolExceptionTest {
     public void testInvalidContentExceptionPass() {
         try {
             validInputContent("some content...");
-        } catch (exceptions.SpecialSymbolException e) {
+        } catch (SpecialSymbolException e) {
             fail("SpecialSymbolException should not have been thrown");
         }
     }
 
 
-    private void validInputContent(String inputContent) throws exceptions.SpecialSymbolException {
+    private void validInputContent(String inputContent) throws SpecialSymbolException {
         if (inputContent.contains("==")) {
-            throw new exceptions.SpecialSymbolException();
+            throw new SpecialSymbolException();
         }
 
     }
