@@ -27,6 +27,12 @@ public class ToDoList implements Saveable, Loadable {
     private static final String OPERATION_GREETING = "What would you like to do? \r\n 1: add a regular item \r\n "
             + "2: add an urgent item \r\n "
             + "3: cross off an item \r\n 4: show all the items \r\n 5: quit \r\n Enter the number: ";
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+    /**************/
+    public Map<String, Item> toDoMap;
+    public Map<String, Item> doneMap;
+    public SchoolList schoolList;
 
 
     // EFFECTS: constructs a new ToDoList
@@ -36,11 +42,16 @@ public class ToDoList implements Saveable, Loadable {
         toDoItems = new ArrayList<>();
         doneItems = new ArrayList<>();
         scanner = new Scanner(System.in);
+
+        /***************/
+        toDoMap = new HashMap<>();
+        doneMap = new HashMap<>();
+        schoolList = new SchoolList();
     }
 
 
-    // EFFECTS: directs the user to corresponding to-do list operations (adding an item, crossing off an entry,
-    //          displaying the list or quitting the program) depending on the user input
+    // EFFECTS: directs the user to corresponding to-do list operations (adding a regular/an urgent item, crossing off
+    //          an entry, displaying the list or quitting the program) depending on the user input
     public void run() throws ParseException, IOException {
         while (true) {
             loadFile();
@@ -72,51 +83,111 @@ public class ToDoList implements Saveable, Loadable {
     // EFFECTS: adds an item to the to-do list
     private void operationAddRegular() throws ParseException, IOException {
         RegularItem regularItem = new RegularItem();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        //Boolean isItValid = false;
 
-        System.out.println("Please enter the content: (do NOT use the symbol '==')");
+        System.out.println("Type '1' to put it under School; type other letters to put it just under regular:");
+        if (scanner.nextLine().equals("1")) {
+            operationAddSchool();
+        } else {
+//            System.out.println("THIS IS JUST REGULAR");
+            System.out.println("Enter the title:");
+            String inputTitle = validInputTitle();
+//            System.out.println("Enter the content (do NOT use the symbol '=='):");
+//            String inputContent = validInputContent();
+//            regularItem.setContent(inputContent);
+//            System.out.println("When is it due? Enter the date in the form dd/MM/yyyy:");
+//            String inputDateStr = validInputDateStr();
+//            regularItem.setDue(formatter.parse(inputDateStr));
+
+//            System.out.println("Do you want to put it under School category? Type 'yes' or 'no': ");
+//            String isSchool = scanner.nextLine();       // isSchool = true: put it under this category
+
+//        if (isSchool.equals("yes")) {
+//            System.out.println("adding regularItem to schoolList");
+//            regularItem.addSchoolList(schoolList);
+//
+//            if (regularItem.isInSchool()) {
+//                System.out.println("schoolList not null!!!");
+//            }
+//        }
+
+            toDoMap.put(inputTitle, validInputItem(regularItem));
+            saveToFile();
+        }
+    }
+
+    private void operationAddSchool() throws ParseException, IOException {
+        RegularItem regularItem = new RegularItem();
+
+//        System.out.println("THIS IS SCHOOL");
+        System.out.println("Enter the title:");
+        String inputTitle = validInputTitle();
+        System.out.println("Enter the content (do NOT use the symbol '=='):");
         String inputContent = validInputContent();
         regularItem.setContent(inputContent);
-        System.out.println("When is it due? Enter the date in the form: dd/MM/yyyy");
-        /*
-        String inputDateStr = scanner.nextLine();
-        while (validateInputDateStr(inputDateStr) == false) {
-            //isItValid = validateDateStr(dateStr);
-            inputDateStr = scanner.nextLine();
-            validateInputDateStr(inputDateStr);
-        }
-         */
+        System.out.println("When is it due? Enter the date in the form dd/MM/yyyy:");
         String inputDateStr = validInputDateStr();
         regularItem.setDue(formatter.parse(inputDateStr));
 
-        toDoItems.add(regularItem);
+
+        regularItem.addSchoolList(schoolList);
+
+        if (regularItem.isInSchool()) {
+            System.out.println("schoolList not null!!!");
+        }
+
+        toDoMap.put(inputTitle, regularItem);
+        saveToFile();
+
+    }
+
+
+    // REQUIRES: toDoList.size() < 1000
+    // MODIFIES: this
+    // EFFECTS: adds an item to the to-do list
+    private void operationAddUrgent() throws ParseException, IOException {
+        UrgentItem urgentItem = new UrgentItem();
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        System.out.println("Enter the title:");
+        String inputTitle = validInputTitle();
+//        System.out.println("Enter the content: (do NOT use the symbol '==')");
+//        String inputContent = validInputContent();
+//        urgentItem.setContent(inputContent);
+//        System.out.println("When is it due? Enter the date in the form: dd/MM/yyyy");
+//        String inputDateStr = validInputDateStr();
+//        urgentItem.setDue(formatter.parse(inputDateStr));
+
+
+//        toDoItems.add(urgentItem);
+        toDoMap.put(inputTitle, validInputItem(urgentItem));
         saveToFile();
     }
 
-    // EFFECTS: check whether inputDateStr is valid (in dd/MM/yyyy form, which can be parsed correctly)
-    public String validInputDateStr() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        String inputDateStr;
-        while (true) {
-            try {
-                inputDateStr = scanner.nextLine();
-                formatter.parse(inputDateStr);
-                break;
-            } catch (ParseException e) {
-                System.out.println("Incorrect date format. Try again:");
-                //scanner.next();
-            }
+    private Item validInputItem(Item item) throws ParseException {
+        System.out.println("Enter the content: (do NOT use the symbol '==')");
+        String inputContent = validInputContent();
+        item.setContent(inputContent);
+        System.out.println("When is it due? Enter the date in the form: dd/MM/yyyy");
+        String inputDateStr = validInputDateStr();
+        item.setDue(formatter.parse(inputDateStr));
+        return item;
+    }
+
+
+    private String validInputTitle() {
+        String inputTitle = scanner.nextLine();
+        while (toDoMap.get(inputTitle) != null) {
+            System.out.println("The title already exists. Retry.");
+            inputTitle = scanner.nextLine();
         }
-        return inputDateStr;
+        return inputTitle;
     }
 
     // EFFECTS: check whether inputContent is valid (not null or empty)
-    public String validInputContent() {
+    private String validInputContent() {
         String inputContent;
         while (true) {
             try {
-                //System.out.println("Please enter the content: (do NOT use the symbol '==')");
                 inputContent = scanner.nextLine();
                 if (inputContent == null || inputContent.isEmpty()) {
                     throw new EmptyContentException();
@@ -131,102 +202,108 @@ public class ToDoList implements Saveable, Loadable {
                 System.out.println("Content cannot contain the symbol '=='. Try again: ");
             }
         }
-        //System.out.println("The returned input content is: " + inputContent);
         return inputContent;
     }
 
-
-    // REQUIRES: toDoList.size() < 1000
-    // MODIFIES: this
-    // EFFECTS: adds an item to the to-do list
-    private void operationAddUrgent() throws ParseException, IOException {
-        UrgentItem urgentItem = new UrgentItem();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
-        System.out.println("Please enter the content: (do NOT use the symbol '==')");
-        /*
-        try {
-            validInputContent(inputContent);
-        } catch (InvalidContentException e) {
-            System.out.println("Content cannot be empty. Re-enter:");
-            inputContent = scanner.nextLine();
+    // EFFECTS: check whether inputDateStr is valid (in dd/MM/yyyy form, which can be parsed correctly)
+    private String validInputDateStr() {
+        String inputDateStr;
+        while (true) {
+            try {
+                inputDateStr = scanner.nextLine();
+                formatter.parse(inputDateStr);
+                break;
+            } catch (ParseException e) {
+                System.out.println("Incorrect date format. Try again:");
+                scanner.next();
+            }
         }
-         */
-        String inputContent = validInputContent();
-        urgentItem.setContent(inputContent);
-
-        System.out.println("When is it due? Enter the date in the form: dd/MM/yyyy");
-        String inputDateStr = validInputDateStr();
-        urgentItem.setDue(formatter.parse(inputDateStr));
-
-        toDoItems.add(urgentItem);
-        saveToFile();
+        return inputDateStr;
     }
+
+//    private boolean validInputBool() {
+//        boolean inputBool;
+//        while (true) {
+//            try {
+//                inputBool = scanner.nextBoolean();
+//                break;
+//            } catch (InputMismatchException e) {
+//                System.out.println("Enter either 'true' or 'false'. Try again:");
+//                scanner.nextBoolean();
+//            }
+//        }
+//        return inputBool;
+//    }
+
+
+
 
     // MODIFIES: this and doneList
     // EFFECTS: deletes an item from the to-do list, and move it to the crossed-off list; if there
     //          is nothing to be deleted, return to the main menu (i.e.: returning to processOperations();)
     private void operationMarkCompleted() throws IOException {
-        int entryNum;
+//        int entryNum;
 
         System.out.println("Here are all the to-do's: ");
         operationDisplayTodo();
-        if (toDoItems.size() == 0) {
+
+//        if (toDoItems.size() == 0) {
+//            System.out.println("You have no items to delete.");
+//        } else {
+//            System.out.println("Which entry would you like to delete? Enter the entry number: ");
+//            entryNum = getValidEntryNum();
+//
+//            toDoItems.get(entryNum).setStatus(true);
+//            doneItems.add(toDoItems.get(entryNum));
+//            toDoItems.remove(entryNum);
+//
+//            saveToFile();
+//        }
+        if (toDoMap.size() == 0) {
             System.out.println("You have no items to delete.");
         } else {
-            System.out.println("Which entry would you like to delete? Enter the entry number: ");
-            //entryNum = scanner.nextInt();
-            /* while (entryNum >= toDoItems.size() || entryNum <  0) {
-                System.out.println("Please enter a valid number: ");
-                entryNum = scanner.nextInt();
-            } */
-            entryNum = getValidEntryNum();
+            System.out.println("Which entry would you like to delete? Enter the entry title: ");
+            String entryTitle = getValidEntryTitle();
 
-            toDoItems.get(entryNum).setStatus(true);
-            doneItems.add(toDoItems.get(entryNum));
-            toDoItems.remove(entryNum);
+//            toDoItems.get(entryNum).setStatus(true);
+//            doneItems.add(toDoItems.get(entryNum));
+//            toDoItems.remove(entryNum);
+            toDoMap.get(entryTitle).setStatus(true);
+            doneMap.put(entryTitle, toDoMap.get(entryTitle));
+            toDoMap.remove(entryTitle);
 
             saveToFile();
         }
     }
 
-    public int getValidEntryNum() {
-        int entryNum;
+    private String getValidEntryTitle() {
+        String entryTitle;
         while (true) {
             try {
-                //System.out.println("Which entry would you like to delete? Enter the entry number: ");
-                entryNum = scanner.nextInt();
-                //validateCrossingOffOperation(entryNum);
-                if (entryNum >= toDoItems.size() || entryNum <  0) {
+                entryTitle = scanner.nextLine();
+                if (toDoMap.get(entryTitle) == null) {
                     throw new InvalidCrossingOffException();
                 }
                 break;
-            } catch (InputMismatchException e) {
-                System.out.println("This is not a number. Try again:");
-                scanner.next();
             } catch (InvalidCrossingOffException e) {
                 System.out.println("Entered number is out of range. Try again:");
                 //scanner.next();
             } finally {
-                System.out.println("This is a finally clause... To satisfy deliv. 6 requirement lol");
+                System.out.println("This is just a finally clause... To satisfy deliverable 6 requirement lol");
             }
         }
-        return entryNum;
+        return entryTitle;
     }
 
-    /*
-    public void validateCrossingOffOperation(int entryNum) throws InvalidCrossingOffException {
-        if (entryNum >= toDoItems.size() || entryNum <  0) {
-            throw new InvalidCrossingOffException();
-        }
-    }
-     */
+
 
     // EFFECTS: displays both do-list list and crossed-off list
-    private void operationDisplay() throws IOException, ParseException {
+    private void operationDisplay() {
         //loadFile();
         System.out.println("To-do list: ");
         operationDisplayTodo();
+        System.out.println("School to-do's: ");
+        operationDisplaySchoolItems();
         System.out.println("Crossed-off list: ");
         operationDisplayDone();
     }
@@ -234,47 +311,70 @@ public class ToDoList implements Saveable, Loadable {
 
     // EFFECTS: displays the to-do list
     private void operationDisplayTodo() {
-        if (toDoItems.size() == 0) {
-            System.out.println("The to-do list is empty");
-        } else {
-            for (int i = 0; i < toDoItems.size(); i++) {
-                System.out.println(i + ": " + toDoItems.get(i).printItem());
+//        if (toDoItems.size() == 0) {
+//            System.out.println("The to-do list is empty");
+//        } else {
+//            for (int i = 0; i < toDoItems.size(); i++) {
+//                System.out.println(i + ": " + toDoItems.get(i).printItem());
+//            }
+//        }
+        toDoMap.forEach((k,i) -> System.out.println(k + ": " + i.printItem()));
+    }
+
+    private void operationDisplaySchoolItems() {
+        toDoMap.forEach((k,i) -> {
+            if (i.isInSchool()) {
+                System.out.println(k + ": " + i.printItem());
             }
-        }
+        });
     }
 
     // EFFECTS: displays the crossed-off list
     private void operationDisplayDone() {
-        if (doneItems.size() == 0) {
-            System.out.println("The crossed-off list is empty");
-        } else {
-            for (int i = 0; i < doneItems.size(); i++) {
-                System.out.println(Integer.toString(i + 1000) + ": " + doneItems.get(i).printItem());
-            }
-        }
+//        if (doneItems.size() == 0) {
+//            System.out.println("The crossed-off list is empty");
+//        } else {
+//            for (int i = 0; i < doneItems.size(); i++) {
+//                System.out.println(Integer.toString(i + 1000) + ": " + doneItems.get(i).printItem());
+//            }
+//        }
+        doneMap.forEach((k,i) -> System.out.println(k + ": " + i.printItem()));
     }
+
+
 
 
 
     @Override
     public void saveToFile() throws IOException {
         PrintWriter writer = new PrintWriter("./data/listData.txt","UTF-8");
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        if (toDoItems.size() != 0) {
-            for (int i = 0; i < toDoItems.size(); i++) {
-                Item toDoItem = toDoItems.get(i);
-                writer.println(i + "==" + toDoItem.getContent() + "==" + formatter.format(toDoItem.getDue()) + "=="
-                        + toDoItem.getStatus() + "==" + toDoItem.getUrg());
-            }
+//        if (toDoItems.size() != 0) {
+//            for (int i = 0; i < toDoItems.size(); i++) {
+//                Item toDoItem = toDoItems.get(i);
+//                writer.println(i + "==" + toDoItem.getContent() + "==" + formatter.format(toDoItem.getDue()) + "=="
+//                        + toDoItem.getStatus() + "==" + toDoItem.getUrg());
+//            }
+//        }
+//        if (doneItems.size() != 0) {
+//            for (int i = 0; i < doneItems.size(); i++) {
+//                Item doneItem = doneItems.get(i);
+//                writer.println((i + 1000) + "==" + doneItem.getContent() + "==" + formatter.format(doneItem.getDue())
+//                        + "==" + doneItem.getStatus() + "==" + doneItem.getUrg());
+//            }
+//        }
+//        writer.close();
+
+        toDoMap.forEach((k,i) -> {
+            //System.out.println(k + ".isInSchool(): " + i.isInSchool());
+            writer.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
+                    + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool());
         }
-        if (doneItems.size() != 0) {
-            for (int i = 0; i < doneItems.size(); i++) {
-                Item doneItem = doneItems.get(i);
-                writer.println((i + 1000) + "==" + doneItem.getContent() + "==" + formatter.format(doneItem.getDue())
-                        + "==" + doneItem.getStatus() + "==" + doneItem.getUrg());
-            }
-        }
+        );
+
+        doneMap.forEach((k,i) -> writer.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
+                + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool()));
         writer.close();
     }
 
@@ -283,20 +383,28 @@ public class ToDoList implements Saveable, Loadable {
     @Override
     public void loadFile() throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get("./data/listData.txt"));
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        toDoItems.clear();
-        doneItems.clear();
+        //SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+//        toDoItems.clear();
+//        doneItems.clear();
+        toDoMap.clear();
+        doneMap.clear();
+        schoolList.clearSchoolItems();
 
         for (String line : lines) {
             ArrayList<String> partsOfLine = splitByPart(line);
-            //Item regularItem = new RegularItem();
-            //Item urgentItem = new UrgentItem();
 
-            if (Integer.parseInt(partsOfLine.get(0)) < 1000) {
+//            if (Integer.parseInt(partsOfLine.get(0)) < 1000) {
+//                loadToToDo(partsOfLine);
+//            } else {
+//                loadToDone(partsOfLine);
+//            }
+
+            if (!Boolean.parseBoolean(partsOfLine.get(3))) {
                 loadToToDo(partsOfLine);
             } else {
                 loadToDone(partsOfLine);
             }
+
             //loadItem(partsOfLine);
         }
     }
@@ -328,35 +436,48 @@ public class ToDoList implements Saveable, Loadable {
     }
      */
 
-    public void loadToToDo(ArrayList<String> partsOfLine) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private void loadToToDo(ArrayList<String> pol) throws ParseException {
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Item regularItem = new RegularItem();
         Item urgentItem = new UrgentItem();
-        Boolean status = Boolean.parseBoolean(partsOfLine.get(3));
-        Boolean urgency = Boolean.parseBoolean(partsOfLine.get(4));
+        //String title = partsOfLine.get(0);
+        //boolean status = Boolean.parseBoolean(pol.get(3));
 
-        if (urgency == true) { //Boolean.parseBoolean(partsOfLine.get(4)) == false
-            urgentItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
-            toDoItems.add(urgentItem);
+        if (Boolean.parseBoolean(pol.get(4))) {
+            urgentItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
+//            toDoItems.add(urgentItem);
+            if (Boolean.parseBoolean(pol.get(5))) {
+                schoolList.addItem(urgentItem);
+            }
+
+            toDoMap.put(pol.get(0), urgentItem);
         } else {
-            regularItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
-            toDoItems.add(regularItem);
+            regularItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
+//            toDoItems.add(regularItem);
+            if (Boolean.parseBoolean(pol.get(5))) {
+                schoolList.addItem(regularItem);
+            }
+
+            toDoMap.put(pol.get(0), regularItem);
         }
     }
 
-    public void loadToDone(ArrayList<String> partsOfLine) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private void loadToDone(ArrayList<String> pol) throws ParseException {
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Item regularItem = new RegularItem();
         Item urgentItem = new UrgentItem();
-        Boolean status = Boolean.parseBoolean(partsOfLine.get(3));
-        Boolean urgency = Boolean.parseBoolean(partsOfLine.get(4));
+        //String title = pol.get(0);
+        //Boolean status = Boolean.parseBoolean(pol.get(3));
+        //Boolean urgency = Boolean.parseBoolean(pol.get(4));
 
-        if (urgency == true) {
-            urgentItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
-            doneItems.add(urgentItem);
+        if (Boolean.parseBoolean(pol.get(4))) {
+            urgentItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
+//            doneItems.add(urgentItem);
+            doneMap.put(pol.get(0), urgentItem);
         } else {
-            regularItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
-            doneItems.add(regularItem);
+            regularItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
+//            doneItems.add(regularItem);
+            doneMap.put(pol.get(0), regularItem);
         }
     }
 

@@ -1,6 +1,7 @@
 package modelTest;
 
 import model.RegularItem;
+import model.SchoolList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,9 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RegularItemTest {
     private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -20,6 +19,9 @@ public class RegularItemTest {
     private final static String DUE_STRING = "30/09/2019";
     private final Date DUE = formatter.parse(DUE_STRING);
     private final static Boolean STATUS = true;
+    private RegularItem regularItem2;
+
+    private SchoolList sl;
 
 
     public RegularItemTest() throws ParseException {
@@ -29,6 +31,7 @@ public class RegularItemTest {
     @BeforeEach
     public void runBefore() {
         regularItem = new RegularItem();
+        sl = new SchoolList();
     }
 
 
@@ -39,7 +42,7 @@ public class RegularItemTest {
 
     @Test
     public void testSetContent() {
-        assertEquals(null, regularItem.getContent());
+        assertNull(regularItem.getContent());
 
         regularItem.setContent(CONTENT);
         assertEquals(CONTENT, regularItem.getContent());
@@ -47,7 +50,7 @@ public class RegularItemTest {
 
     @Test
     public void testSetDue() {
-        assertEquals(null, regularItem.getDue());
+        assertNull(regularItem.getDue());
 
         regularItem.setDue(DUE);
         assertEquals(DUE, regularItem.getDue());
@@ -85,5 +88,28 @@ public class RegularItemTest {
         regularItem.setStatus(STATUS);
         assertEquals(CONTENT + " is due on " + formatter.format(DUE) + ". Completed!",
                 regularItem.printItem());
+    }
+
+
+
+    @Test
+    public void testAddAndRemoveSchoolList() {
+        assertNull(regularItem.getSchoolList());
+
+        regularItem.addSchoolList(sl);
+        assertEquals(sl, regularItem.getSchoolList());
+        assertTrue(sl.getSchoolItems().contains(regularItem));
+
+        regularItem.removeFromSchoolList();
+        assertNull(regularItem.getSchoolList());
+        assertFalse(sl.getSchoolItems().contains(regularItem));
+    }
+
+    @Test
+    public void testOverridingEqualsAndHashCode() {
+        regularItem2 = new RegularItem();
+        regularItem.setThis(CONTENT, DUE, STATUS);
+        regularItem2.setThis(CONTENT, DUE, STATUS);
+        assertTrue(regularItem.equals(regularItem2));
     }
 }

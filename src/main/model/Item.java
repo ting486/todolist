@@ -1,19 +1,27 @@
 package model;
 
+import ui.ToDoList;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 public abstract class Item {
     protected String content;
     protected Date due;
-    protected Boolean status;
-    protected Boolean urgency;
+    protected boolean status;
+    protected boolean urgency;
+    protected SchoolList schoolList;
+//    public ToDoList toDoListIsIn;
+    //public List<Item> inDone;
 
     // EFFECTS: creates an empty Item
     public Item() {
         this.content = null;
         this.due = null;
         this.status = false;
+        this.schoolList = null;
     }
 
 
@@ -58,13 +66,17 @@ public abstract class Item {
     }
 
     // EFFECTS: get the completion status of the item (in boolean form)
-    public Boolean getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
     // EFFECTS: get the urgency status of the item (in boolean form)
-    public Boolean getUrg() {
+    public boolean getUrg() {
         return urgency;
+    }
+
+    public SchoolList getSchoolList() {
+        return schoolList;
     }
 
 
@@ -79,4 +91,50 @@ public abstract class Item {
             return (content + " is due on " + formatter.format((due)) + ". Not completed :(");
         }
     }
+
+
+
+    public void addSchoolList(SchoolList sl) {
+        if (schoolList != sl) {
+            schoolList = sl;
+            sl.addItem(this);
+        }
+    }
+
+    public void removeFromSchoolList() {
+        if (getSchoolList() != null) {
+            schoolList.removeItem(this);
+            schoolList = null;
+        }
+    }
+
+
+    public boolean isInSchool() {
+        if (getSchoolList() != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Item item = (Item) o;
+        return content.equals(item.content)
+                && due.equals(item.due)
+                && Objects.equals(status, item.status)
+                && Objects.equals(urgency, item.urgency);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(content, due, status, urgency);
+    }
+
 }
