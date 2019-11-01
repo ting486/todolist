@@ -1,6 +1,6 @@
-0==new 3==12/12/2019==false==false
-1==random random==22/10/2019==false==false
-2==urgent 1==20/10/2019==false==true
-1000==try1==11/11/1111==true==false
-1001==try3 - to be deleted==11/10/2019==true==false
-1002==this urgent item is done==01/10/2019==true==true
+urgent 1==urgent 1==20/10/2019==false==true==false
+new 3==new 3==12/12/2019==false==false==false
+cpsc210==cpsc210==22/10/2019==false==false==true
+done urg==done urg==01/10/2019==true==true==false
+done reg 1==done reg 1==11/11/1111==true==false==false
+done reg 2==done reg 2==11/10/2019==true==false==false

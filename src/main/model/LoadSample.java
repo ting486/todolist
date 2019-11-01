@@ -49,8 +49,12 @@ public class LoadSample {
     public ToDoList loadFile() throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get("./data/testFileLoad.txt"));
         //SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        sampleToDoItems.toDoItems.clear();
-        sampleToDoItems.doneItems.clear();
+//        sampleToDoItems.toDoItems.clear();
+//        sampleToDoItems.doneItems.clear();
+        sampleToDoItems.toDoMap.clear();
+        sampleToDoItems.doneMap.clear();
+        sampleToDoItems.schoolList.clearSchoolItems();
+
 
         for (String line : lines) {
             ArrayList<String> partsOfLine = splitByPart(line);

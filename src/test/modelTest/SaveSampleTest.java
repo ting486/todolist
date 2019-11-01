@@ -2,6 +2,7 @@ package modelTest;
 
 import model.RegularItem;
 import model.SaveSample;
+import model.SchoolList;
 import model.UrgentItem;
 import ui.ToDoList;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,22 +21,24 @@ public class SaveSampleTest {
     private SaveSample sampleInputList;
     private SaveSample yooo;
     //private SaveSample expectedList;
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private SchoolList sl;
 
     @BeforeEach
     public void runBefore() throws IOException, ParseException {
         sampleInputList = new SaveSample();
         yooo = new SaveSample();
+        sl = new SchoolList();
     }
 
     @Test
     public void testSaveThisSample() throws IOException, ParseException {
         //ToDoList expectedList = new ToDoList();
         ToDoList expectedList = sampleInputList.sampleToDoItems;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        RegularItem toDoReg1 = new RegularItem();
-        toDoReg1.setContent("new 3");
-        toDoReg1.setDue(formatter.parse("12/12/2019"));
+        RegularItem toDoReg = new RegularItem();
+        toDoReg.setContent("new 3");
+        toDoReg.setDue(formatter.parse("12/12/2019"));
         //toDoReg1.setStatus(false);
 
         UrgentItem toDoUrg1 = new UrgentItem();
@@ -43,60 +46,77 @@ public class SaveSampleTest {
         toDoUrg1.setDue(formatter.parse("20/10/2019"));
         //toDoUrg1.setStatus(false);
 
-        RegularItem toDoReg2 = new RegularItem();
-        toDoReg2.setContent("random random");
-        toDoReg2.setDue(formatter.parse("22/10/2019"));
+        RegularItem toDoSchool = new RegularItem();
+        toDoSchool.setContent("cpsc210");
+        toDoSchool.setDue(formatter.parse("22/10/2019"));
         //toDoReg2.setStatus(false);
+        toDoSchool.addSchoolList(sl);
 
         RegularItem doneReg1 = new RegularItem();
-        doneReg1.setContent("try1");
+        doneReg1.setContent("done reg 1");
         doneReg1.setDue(formatter.parse("11/11/1111"));
         doneReg1.setStatus(true);
 
         RegularItem doneReg2 = new RegularItem();
-        doneReg2.setContent("try3 - to be deleted");
+        doneReg2.setContent("done reg 2");
         doneReg2.setDue(formatter.parse("11/10/2019"));
         doneReg2.setStatus(true);
 
         UrgentItem doneUrg1 = new UrgentItem();
-        doneUrg1.setContent("this urgent item is done");
+        doneUrg1.setContent("done urg");
         doneUrg1.setDue(formatter.parse("01/10/2019"));
         doneUrg1.setStatus(true);
 
-        sampleInputList.sampleToDoItems.toDoItems.add(toDoReg1);
-        sampleInputList.sampleToDoItems.toDoItems.add(toDoReg2);
-        sampleInputList.sampleToDoItems.toDoItems.add(toDoUrg1);
-        sampleInputList.sampleToDoItems.doneItems.add(doneReg1);
-        sampleInputList.sampleToDoItems.doneItems.add(doneReg2);
-        sampleInputList.sampleToDoItems.doneItems.add(doneUrg1);
+//        sampleInputList.sampleToDoItems.toDoItems.add(toDoReg);
+//        sampleInputList.sampleToDoItems.toDoItems.add(toDoSchool);
+//        sampleInputList.sampleToDoItems.toDoItems.add(toDoUrg1);
+//        sampleInputList.sampleToDoItems.doneItems.add(doneReg1);
+//        sampleInputList.sampleToDoItems.doneItems.add(doneReg2);
+//        sampleInputList.sampleToDoItems.doneItems.add(doneUrg1);
+
+        sampleInputList.sampleToDoItems.toDoMap.put("new 3", toDoReg);
+        sampleInputList.sampleToDoItems.toDoMap.put("cpsc210", toDoSchool);
+        sampleInputList.sampleToDoItems.toDoMap.put("urgent 1", toDoUrg1);
+        sampleInputList.sampleToDoItems.doneMap.put("done reg 1", doneReg1);
+        sampleInputList.sampleToDoItems.doneMap.put("done reg 2", doneReg2);
+        sampleInputList.sampleToDoItems.doneMap.put("done urg", doneUrg1);
 
 
         sampleInputList.saveThisSample();
-        ToDoList sampleOutputList = yooo.loadFile();
+        ToDoList sampleOutputList = sampleInputList.loadFile();
 
-        assertEquals(expectedList.toDoItems.size(), sampleOutputList.toDoItems.size());
-        if (expectedList.toDoItems.size() != 0) {
-            for (int i = 0; i < expectedList.toDoItems.size(); i++) {
-                String expectedPrint = expectedList.toDoItems.get(i).printItem();
-                String samplePrint = sampleOutputList.toDoItems.get(i).printItem();
-                assertEquals(expectedPrint, samplePrint);
-            }
-        }
-        assertFalse(sampleOutputList.toDoItems.get(0).getUrg());
-        assertFalse(sampleOutputList.toDoItems.get(1).getUrg());
-        assertTrue(sampleOutputList.toDoItems.get(2).getUrg());
+        assertEquals(expectedList.toDoMap.size(), sampleOutputList.toDoMap.size());
+//        if (expectedList.toDoItems.size() != 0) {
+//            for (int i = 0; i < expectedList.toDoItems.size(); i++) {
+//                String expectedPrint = expectedList.toDoItems.get(i).printItem();
+//                String samplePrint = sampleOutputList.toDoItems.get(i).printItem();
+//                assertEquals(expectedPrint, samplePrint);
+//            }
+//        }
+        assertTrue(sampleOutputList.toDoMap.containsValue(toDoReg));
+        assertTrue(sampleOutputList.toDoMap.containsValue(toDoSchool));
+        assertTrue(sampleOutputList.toDoMap.containsValue(toDoUrg1));
+        assertFalse(sampleOutputList.toDoMap.get("new 3").getUrg());
+        assertFalse(sampleOutputList.toDoMap.get("cpsc210").getUrg());
+        assertTrue(sampleOutputList.toDoMap.get("urgent 1").getUrg());
+        assertFalse(sampleOutputList.toDoMap.get("new 3").isInSchool());
+        assertTrue(sampleOutputList.toDoMap.get("cpsc210").isInSchool());
+        assertFalse(sampleOutputList.toDoMap.get("urgent 1").isInSchool());
 
-        assertEquals(expectedList.doneItems.size(), sampleOutputList.doneItems.size());
-        if (expectedList.doneItems.size() != 0) {
-            for (int i = 0; i < expectedList.doneItems.size(); i++) {
-                String expectedPrint = expectedList.doneItems.get(i).printItem();
-                String samplePrint = sampleOutputList.doneItems.get(i).printItem();
-                assertEquals(expectedPrint, samplePrint);
-            }
-        }
-        assertFalse(sampleOutputList.doneItems.get(0).getUrg());
-        assertFalse(sampleOutputList.doneItems.get(1).getUrg());
-        assertTrue(sampleOutputList.doneItems.get(2).getUrg());
+        assertEquals(expectedList.doneMap.size(), sampleOutputList.doneMap.size());
+//        if (expectedList.doneItems.size() != 0) {
+//            for (int i = 0; i < expectedList.doneItems.size(); i++) {
+//                String expectedPrint = expectedList.doneItems.get(i).printItem();
+//                String samplePrint = sampleOutputList.doneItems.get(i).printItem();
+//                assertEquals(expectedPrint, samplePrint);
+//            }
+//        }
+        assertTrue(sampleOutputList.doneMap.containsValue(doneReg1));
+        assertTrue(sampleOutputList.doneMap.containsValue(doneReg2));
+        assertTrue(sampleOutputList.doneMap.containsValue(doneUrg1));
+        assertFalse(sampleOutputList.doneMap.get("done reg 1").getUrg());
+        assertFalse(sampleOutputList.doneMap.get("done reg 2").getUrg());
+        assertTrue(sampleOutputList.doneMap.get("done urg").getUrg());
     }
 
     @Test

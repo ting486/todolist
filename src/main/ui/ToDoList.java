@@ -20,16 +20,15 @@ public class ToDoList implements Saveable, Loadable {
 
     //public List<RegularItem> regularToDoItems;
     //public List<UrgentItem> urgentToDoItems;
-    public List<Item> toDoItems;
+//    public List<Item> toDoItems;
     //public ArrayList<RegularItem> doneList;
-    public ArrayList<Item> doneItems;
+//    public ArrayList<Item> doneItems;
     private Scanner scanner;
     private static final String OPERATION_GREETING = "What would you like to do? \r\n 1: add a regular item \r\n "
             + "2: add an urgent item \r\n "
             + "3: cross off an item \r\n 4: show all the items \r\n 5: quit \r\n Enter the number: ";
     private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    /**************/
     public Map<String, Item> toDoMap;
     public Map<String, Item> doneMap;
     public SchoolList schoolList;
@@ -39,11 +38,10 @@ public class ToDoList implements Saveable, Loadable {
     public ToDoList() {
         //regularToDoItems = new ArrayList<>();
         //urgentToDoItems = new ArrayList<>();
-        toDoItems = new ArrayList<>();
-        doneItems = new ArrayList<>();
+//        toDoItems = new ArrayList<>();
+//        doneItems = new ArrayList<>();
         scanner = new Scanner(System.in);
 
-        /***************/
         toDoMap = new HashMap<>();
         doneMap = new HashMap<>();
         schoolList = new SchoolList();
@@ -110,9 +108,22 @@ public class ToDoList implements Saveable, Loadable {
 //            }
 //        }
 
-            toDoMap.put(inputTitle, validInputItem(regularItem));
-            saveToFile();
+            if (isValidInputItem(validInputItem(regularItem))) {
+                toDoMap.put(inputTitle, validInputItem(regularItem));
+                saveToFile();
+            }
         }
+    }
+
+    private boolean isValidInputItem(Item item) {
+        for (Map.Entry<String, Item> entry : toDoMap.entrySet()) {
+            //String k = entry.getKey();
+            Item v = entry.getValue();
+            if (v.equals(item)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void operationAddSchool() throws ParseException, IOException {
@@ -135,8 +146,10 @@ public class ToDoList implements Saveable, Loadable {
             System.out.println("schoolList not null!!!");
         }
 
-        toDoMap.put(inputTitle, regularItem);
-        saveToFile();
+        if (isValidInputItem(regularItem)) {
+            toDoMap.put(inputTitle, regularItem);
+            saveToFile();
+        }
 
     }
 
@@ -146,7 +159,6 @@ public class ToDoList implements Saveable, Loadable {
     // EFFECTS: adds an item to the to-do list
     private void operationAddUrgent() throws ParseException, IOException {
         UrgentItem urgentItem = new UrgentItem();
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         System.out.println("Enter the title:");
         String inputTitle = validInputTitle();
@@ -348,7 +360,6 @@ public class ToDoList implements Saveable, Loadable {
     @Override
     public void saveToFile() throws IOException {
         PrintWriter writer = new PrintWriter("./data/listData.txt","UTF-8");
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 //        if (toDoItems.size() != 0) {
 //            for (int i = 0; i < toDoItems.size(); i++) {
@@ -383,7 +394,6 @@ public class ToDoList implements Saveable, Loadable {
     @Override
     public void loadFile() throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get("./data/listData.txt"));
-        //SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 //        toDoItems.clear();
 //        doneItems.clear();
         toDoMap.clear();
@@ -411,7 +421,6 @@ public class ToDoList implements Saveable, Loadable {
 
     /*
     public void loadItem(ArrayList<String> partsOfLine) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Item regularItem = new RegularItem();
         Item urgentItem = new UrgentItem();
         Boolean status = Boolean.parseBoolean(partsOfLine.get(3));
@@ -437,7 +446,6 @@ public class ToDoList implements Saveable, Loadable {
      */
 
     private void loadToToDo(ArrayList<String> pol) throws ParseException {
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Item regularItem = new RegularItem();
         Item urgentItem = new UrgentItem();
         //String title = partsOfLine.get(0);
@@ -463,7 +471,6 @@ public class ToDoList implements Saveable, Loadable {
     }
 
     private void loadToDone(ArrayList<String> pol) throws ParseException {
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Item regularItem = new RegularItem();
         Item urgentItem = new UrgentItem();
         //String title = pol.get(0);
