@@ -12,26 +12,23 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RegularItemTest {
-    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     private RegularItem regularItem;
     private final static String CONTENT = "sample content";
     private final static String DUE_STRING = "30/09/2019";
-    private final Date DUE = formatter.parse(DUE_STRING);
+    private Date due;
     private final static Boolean STATUS = true;
     private RegularItem regularItem2;
 
     private SchoolList sl;
 
 
-    public RegularItemTest() throws ParseException {
-    }
-
 
     @BeforeEach
-    public void runBefore() {
+    public void runBefore() throws ParseException {
         regularItem = new RegularItem();
         sl = new SchoolList();
+        due = regularItem.formatter.parse(DUE_STRING);
     }
 
 
@@ -52,8 +49,8 @@ public class RegularItemTest {
     public void testSetDue() {
         assertNull(regularItem.getDue());
 
-        regularItem.setDue(DUE);
-        assertEquals(DUE, regularItem.getDue());
+        regularItem.setDue(due);
+        assertEquals(due, regularItem.getDue());
     }
 
     @Test
@@ -66,9 +63,9 @@ public class RegularItemTest {
 
     @Test
     public void testSetThis() {
-        regularItem.setThis(CONTENT, DUE, STATUS);
+        regularItem.setThis(CONTENT, due, STATUS);
         assertEquals(CONTENT, regularItem.getContent());
-        assertEquals(DUE, regularItem.getDue());
+        assertEquals(due, regularItem.getDue());
         assertEquals(STATUS, regularItem.getStatus());
     }
 
@@ -81,12 +78,12 @@ public class RegularItemTest {
     @Test
     public void testPrintEntry() {
         regularItem.setContent(CONTENT);
-        regularItem.setDue(DUE);
-        assertEquals(CONTENT + " is due on " + formatter.format(DUE) + ". Not completed :(",
+        regularItem.setDue(due);
+        assertEquals(CONTENT + " is due on " + regularItem.formatter.format(due) + ". Not completed :(",
                 regularItem.printItem());
 
         regularItem.setStatus(STATUS);
-        assertEquals(CONTENT + " is due on " + formatter.format(DUE) + ". Completed!",
+        assertEquals(CONTENT + " is due on " + regularItem.formatter.format(due) + ". Completed!",
                 regularItem.printItem());
     }
 
@@ -108,8 +105,9 @@ public class RegularItemTest {
     @Test
     public void testOverridingEqualsAndHashCode() {
         regularItem2 = new RegularItem();
-        regularItem.setThis(CONTENT, DUE, STATUS);
-        regularItem2.setThis(CONTENT, DUE, STATUS);
+        regularItem.setThis(CONTENT, due, STATUS);
+        regularItem2.setThis(CONTENT, due, STATUS);
+        assertEquals(regularItem.hashCode(), regularItem2.hashCode());
         assertTrue(regularItem.equals(regularItem2));
     }
 }

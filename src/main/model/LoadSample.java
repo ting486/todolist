@@ -2,7 +2,9 @@ package model;
 
 import ui.ToDoList;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
@@ -12,39 +14,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LoadSample {
-    //ArrayList<String> listOfString = new ArrayList<>();
     ToDoList sampleToDoItems = new ToDoList();
     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-
-    public LoadSample() throws IOException, ParseException {
+    public LoadSample() throws FileNotFoundException, UnsupportedEncodingException {
     }
 
-    /*
-    public ToDoList load() throws IOException, ParseException {
-        List<String> lines = Files.readAllLines(Paths.get("./data/testFileLoad.txt"));
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        sampleToDoItems.toDoList.clear();
-        sampleToDoItems.doneList.clear();
-
-        for (String line : lines) {
-            ArrayList<String> partsOfLine = splitByPart(line);
-            RegularItem regularItem = new RegularItem();
-            //UrgentItem urgentItem = new UrgentItem();
-
-            int indexNum = Integer.parseInt(partsOfLine.get(0));
-            regularItem.setContent(partsOfLine.get(1));
-            regularItem.setDue(formatter.parse(partsOfLine.get(2)));
-            regularItem.setStatus(Boolean.parseBoolean(partsOfLine.get(3)));
-            if (indexNum < 1000) {
-                sampleToDoItems.toDoList.add(regularItem);
-            } else {
-                sampleToDoItems.doneList.add(regularItem);
-            }
-        }
-        return sampleToDoItems;
-    }
-     */
 
     public ToDoList loadFile() throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get("./data/testFileLoad.txt"));

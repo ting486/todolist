@@ -1,10 +1,7 @@
 package model;
 
-import ui.ToDoList;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 public abstract class Item {
@@ -13,8 +10,11 @@ public abstract class Item {
     protected boolean status;
     protected boolean urgency;
     protected SchoolList schoolList;
-//    public ToDoList toDoListIsIn;
-    //public List<Item> inDone;
+    public static final String FORMATTER_PATTERN = "dd/MM/yyyy";
+    public SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER_PATTERN);    // I moved formatter s.t. it is
+                                                                                    // a field of Item, which reduces
+                                                                                    // hard coding
+
 
     // EFFECTS: creates an empty Item
     public Item() {
@@ -34,7 +34,6 @@ public abstract class Item {
         this.content = content;
     }
 
-    // REQUIRES: due > today
     // MODIFIES: this
     // EFFECTS: sets the due date of the item
     public void setDue(Date due) {
@@ -55,36 +54,33 @@ public abstract class Item {
         setStatus(status);
     }
 
-    // EFFECTS: get the content of the item
+    // EFFECTS: gets the content
     public String getContent() {
         return content;
     }
 
-    // EFFECTS: get the due date of the item
+    // EFFECTS: gets the due date
     public Date getDue() {
         return due;
     }
 
-    // EFFECTS: get the completion status of the item (in boolean form)
+    // EFFECTS: gets the completion status
     public boolean getStatus() {
         return status;
     }
 
-    // EFFECTS: get the urgency status of the item (in boolean form)
+    // EFFECTS: gets the urgency status
     public boolean getUrg() {
         return urgency;
     }
 
+    // EFFECTS: gets schoolList
     public SchoolList getSchoolList() {
         return schoolList;
     }
 
-
-
     // EFFECTS: prints out the info of a to-do item in the form of a sentence
     public String printItem() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
         if (status == true) {
             return (content + " is due on " + formatter.format((due)) + ". Completed!");
         } else {
@@ -93,7 +89,8 @@ public abstract class Item {
     }
 
 
-
+    // MODIFIES: this, sl
+    // EFFECTS: adds sl to schoolList
     public void addSchoolList(SchoolList sl) {
         if (schoolList != sl) {
             schoolList = sl;
@@ -101,6 +98,8 @@ public abstract class Item {
         }
     }
 
+    // MODIFIES: this, sl
+    // EFFECTS: empties schoolList
     public void removeFromSchoolList() {
         if (getSchoolList() != null) {
             schoolList.removeItem(this);
@@ -108,7 +107,7 @@ public abstract class Item {
         }
     }
 
-
+    // EFFECTS: returns true if getSchoolList() is not null
     public boolean isInSchool() {
         if (getSchoolList() != null) {
             return true;
@@ -117,6 +116,8 @@ public abstract class Item {
         }
     }
 
+
+    // EFFECTS: returns true if two Items have same content, due, status and urgency
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -132,6 +133,7 @@ public abstract class Item {
                 && Objects.equals(urgency, item.urgency);
     }
 
+    // EFFECTS: returns an Item's hashCode based on its content, due, status and urgency
     @Override
     public int hashCode() {
         return Objects.hash(content, due, status, urgency);

@@ -1,9 +1,6 @@
 package modelTest;
 
-import model.RegularItem;
-import model.SaveSample;
-import model.SchoolList;
-import model.UrgentItem;
+import model.*;
 import ui.ToDoList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,43 +33,34 @@ public class SaveSampleTest {
         //ToDoList expectedList = new ToDoList();
         ToDoList expectedList = sampleInputList.sampleToDoItems;
 
-        RegularItem toDoReg = new RegularItem();
+        Item toDoReg = new RegularItem();
         toDoReg.setContent("new 3");
         toDoReg.setDue(formatter.parse("12/12/2019"));
-        //toDoReg1.setStatus(false);
 
-        UrgentItem toDoUrg1 = new UrgentItem();
+        Item toDoUrg1 = new UrgentItem();
         toDoUrg1.setContent("urgent 1");
         toDoUrg1.setDue(formatter.parse("20/10/2019"));
-        //toDoUrg1.setStatus(false);
 
-        RegularItem toDoSchool = new RegularItem();
+        Item toDoSchool = new RegularItem();
         toDoSchool.setContent("cpsc210");
         toDoSchool.setDue(formatter.parse("22/10/2019"));
-        //toDoReg2.setStatus(false);
         toDoSchool.addSchoolList(sl);
 
-        RegularItem doneReg1 = new RegularItem();
+        Item doneReg1 = new RegularItem();
         doneReg1.setContent("done reg 1");
         doneReg1.setDue(formatter.parse("11/11/1111"));
         doneReg1.setStatus(true);
 
-        RegularItem doneReg2 = new RegularItem();
+        Item doneReg2 = new RegularItem();
         doneReg2.setContent("done reg 2");
         doneReg2.setDue(formatter.parse("11/10/2019"));
         doneReg2.setStatus(true);
 
-        UrgentItem doneUrg1 = new UrgentItem();
+        Item doneUrg1 = new UrgentItem();
         doneUrg1.setContent("done urg");
         doneUrg1.setDue(formatter.parse("01/10/2019"));
         doneUrg1.setStatus(true);
 
-//        sampleInputList.sampleToDoItems.toDoItems.add(toDoReg);
-//        sampleInputList.sampleToDoItems.toDoItems.add(toDoSchool);
-//        sampleInputList.sampleToDoItems.toDoItems.add(toDoUrg1);
-//        sampleInputList.sampleToDoItems.doneItems.add(doneReg1);
-//        sampleInputList.sampleToDoItems.doneItems.add(doneReg2);
-//        sampleInputList.sampleToDoItems.doneItems.add(doneUrg1);
 
         sampleInputList.sampleToDoItems.toDoMap.put("new 3", toDoReg);
         sampleInputList.sampleToDoItems.toDoMap.put("cpsc210", toDoSchool);
@@ -86,13 +74,7 @@ public class SaveSampleTest {
         ToDoList sampleOutputList = sampleInputList.loadFile();
 
         assertEquals(expectedList.toDoMap.size(), sampleOutputList.toDoMap.size());
-//        if (expectedList.toDoItems.size() != 0) {
-//            for (int i = 0; i < expectedList.toDoItems.size(); i++) {
-//                String expectedPrint = expectedList.toDoItems.get(i).printItem();
-//                String samplePrint = sampleOutputList.toDoItems.get(i).printItem();
-//                assertEquals(expectedPrint, samplePrint);
-//            }
-//        }
+
         assertTrue(sampleOutputList.toDoMap.containsValue(toDoReg));
         assertTrue(sampleOutputList.toDoMap.containsValue(toDoSchool));
         assertTrue(sampleOutputList.toDoMap.containsValue(toDoUrg1));
@@ -103,14 +85,10 @@ public class SaveSampleTest {
         assertTrue(sampleOutputList.toDoMap.get("cpsc210").isInSchool());
         assertFalse(sampleOutputList.toDoMap.get("urgent 1").isInSchool());
 
+
+
         assertEquals(expectedList.doneMap.size(), sampleOutputList.doneMap.size());
-//        if (expectedList.doneItems.size() != 0) {
-//            for (int i = 0; i < expectedList.doneItems.size(); i++) {
-//                String expectedPrint = expectedList.doneItems.get(i).printItem();
-//                String samplePrint = sampleOutputList.doneItems.get(i).printItem();
-//                assertEquals(expectedPrint, samplePrint);
-//            }
-//        }
+
         assertTrue(sampleOutputList.doneMap.containsValue(doneReg1));
         assertTrue(sampleOutputList.doneMap.containsValue(doneReg2));
         assertTrue(sampleOutputList.doneMap.containsValue(doneUrg1));

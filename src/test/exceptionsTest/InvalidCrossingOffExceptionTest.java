@@ -5,13 +5,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ui.ToDoList;
 
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class InvalidCrossingOffExceptionTest {
     ToDoList toDoList;
 
     @BeforeEach
-    public void runBefore() {
+    public void runBefore() throws FileNotFoundException, UnsupportedEncodingException {
         toDoList = new ToDoList();
     }
 
