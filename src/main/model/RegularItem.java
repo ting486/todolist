@@ -6,7 +6,7 @@ public class RegularItem extends Item {
     public RegularItem() {
         super();
         this.urgency = false;
-        this.schoolList = null;
+        //this.schoolList = null;
     }
 
     // EFFECTS: greets

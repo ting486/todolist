@@ -95,6 +95,7 @@ public abstract class Item {
         if (schoolList != sl) {
             schoolList = sl;
             sl.addItem(this);
+            sl.notifyObservers(this);
         }
     }
 

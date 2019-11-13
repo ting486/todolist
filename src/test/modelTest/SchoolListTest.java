@@ -2,6 +2,7 @@ package modelTest;
 
 import model.RegularItem;
 import model.SchoolList;
+import model.Subscriber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,8 @@ public class SchoolListTest {
     private RegularItem ri2;
     private RegularItem ri11;
     private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+    private Subscriber subscriber;
 
     @BeforeEach
     public void runBefore() throws ParseException {
@@ -81,5 +84,16 @@ public class SchoolListTest {
 //        assertEquals(sl, ri1.getSchoolList());
 //        assertNull(ri11.getSchoolList());
 //    }
+
+
+    @Test
+    public void testAddObserver() {
+        subscriber = new Subscriber("Tom");
+
+        assertEquals(0, sl.getObservers().size());
+
+        sl.addObserver(subscriber);
+        assertEquals(1, sl.getObservers().size());
+    }
 
 }

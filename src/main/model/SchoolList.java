@@ -2,13 +2,14 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class SchoolList {
+
+public class SchoolList extends Subject {
     public List<Item> schoolItems;
 
     // EFFECTS: constructs a SchoolList
     public SchoolList() {
+        super();
         schoolItems = new ArrayList<>();
     }
 
@@ -18,6 +19,7 @@ public class SchoolList {
         if (!schoolItems.contains(i)) {
             schoolItems.add(i);
             i.addSchoolList(this);
+            //notifyObservers(i);
         }
     }
 

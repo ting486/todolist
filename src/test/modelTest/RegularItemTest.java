@@ -96,10 +96,12 @@ public class RegularItemTest {
         regularItem.addSchoolList(sl);
         assertEquals(sl, regularItem.getSchoolList());
         assertTrue(sl.getSchoolItems().contains(regularItem));
+        assertTrue(regularItem.isInSchool());
 
         regularItem.removeFromSchoolList();
         assertNull(regularItem.getSchoolList());
         assertFalse(sl.getSchoolItems().contains(regularItem));
+        assertFalse(regularItem.isInSchool());
     }
 
     @Test
@@ -109,5 +111,8 @@ public class RegularItemTest {
         regularItem2.setThis(CONTENT, due, STATUS);
         assertEquals(regularItem.hashCode(), regularItem2.hashCode());
         assertTrue(regularItem.equals(regularItem2));
+
+        assertTrue(regularItem.equals(regularItem));
+        assertFalse(regularItem.equals(1));
     }
 }

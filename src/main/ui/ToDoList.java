@@ -1,7 +1,9 @@
 package ui;
 
+import model.Observer;
 import model.exceptions.*;
 import model.*;
+import network.ReadWebPage;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,13 +22,13 @@ public class ToDoList implements Saveable, Loadable {
     public Map<String, Item> toDoMap;
     public Map<String, Item> doneMap;
     public SchoolList schoolList;
+    private Observer subscriber;
 
     private Scanner scanner;
     private SimpleDateFormat formatter = new SimpleDateFormat(Item.FORMATTER_PATTERN);
-    /** reduces hard coding **/
 
-    private PrintWriter writer = new PrintWriter("./data/listData.txt","UTF-8");
-    private static final String OPERATION_GREETING = "What would you like to do? \r\n 1: add a regular item \r\n "
+    private static final String FILE_NAME = "./data/listData.txt";
+    private static final String OPERATION_GREETING = "\r What would you like to do? \r\n 1: add a regular item \r\n "
             + "2: add an urgent item \r\n "
             + "3: cross off an item \r\n 4: show all the items \r\n 5: quit \r\n Enter the number: ";
 
@@ -38,7 +40,8 @@ public class ToDoList implements Saveable, Loadable {
         toDoMap = new HashMap<>();
         doneMap = new HashMap<>();
         schoolList = new SchoolList();
-
+        subscriber = new Subscriber("user");
+        schoolList.addObserver(subscriber);
     }
 
 
@@ -70,7 +73,7 @@ public class ToDoList implements Saveable, Loadable {
     // MODIFIES: this
     // EFFECTS: adds an item to the to-do list
     private void operationAddRegular() throws ParseException, IOException {
-        RegularItem regularItem = new RegularItem();
+        Item regularItem = new RegularItem();
 
         System.out.println("Type '1' to put it under School; type other letters to put it just under regular:");
         if (scanner.nextLine().equals("1")) {
@@ -84,11 +87,14 @@ public class ToDoList implements Saveable, Loadable {
 //            System.out.println("When is it due? Enter the date in the form: dd/MM/yyyy");
 //            String inputDateStr = validInputDateStr();
 //            regularItem.setDue(formatter.parse(inputDateStr));
+            //regularItem = validInputItem(regularItem);
 
-            if (isValidInputItem(validInputItem(regularItem))) {
-                toDoMap.put(inputTitle, validInputItem(regularItem));
-                saveToFile();
-            }
+            //if (isValidInputItem(validInputItem(regularItem))) {
+            //System.out.println("is a valid input regular item");
+            Item validRegularItem = validInputItem(regularItem);
+            toDoMap.put(inputTitle, validRegularItem);
+            saveToFile();
+            //}
         }
 
     }
@@ -96,34 +102,34 @@ public class ToDoList implements Saveable, Loadable {
     // MODIFIES: this
     // EFFECTS: adds an item to the to-do list
     private void operationAddSchool() throws ParseException, IOException {
-        RegularItem regularItem = new RegularItem();
+        Item regularItem = new RegularItem();
 
 //        System.out.println("Enter the title:");
         String inputTitle = validInputTitle();
-//        System.out.println("Enter the content (do NOT use the symbol '=='):");
-//        String inputContent = validInputContent();
-//        regularItem.setContent(inputContent);
-//        System.out.println("When is it due? Enter the date in the form dd/MM/yyyy:");
-//        String inputDateStr = validInputDateStr();
-//        regularItem.setDue(formatter.parse(inputDateStr));
+        System.out.println("Enter the content (do NOT use the symbol '=='):");
+        String inputContent = validInputContent();
+        regularItem.setContent(inputContent);
+        System.out.println("When is it due? Enter the date in the form dd/MM/yyyy:");
+        String inputDateStr = validInputDateStr();
+        regularItem.setDue(formatter.parse(inputDateStr));
 
-        Item validRegularItem = validInputItem(regularItem);
+        //Item validRegularItem = validInputItem(regularItem);
 
 //        if (regularItem.isInSchool()) {
 //            System.out.println("schoolList not null!!!");
 //        }
-        if (isValidInputItem(validRegularItem)) {
-            validRegularItem.addSchoolList(schoolList);
-            toDoMap.put(inputTitle, validRegularItem);
-            saveToFile();
-        }
+        //if (isValidInputItem(validRegularItem)) {
+        regularItem.addSchoolList(schoolList);
+        toDoMap.put(inputTitle, regularItem);
+        saveToFile();
+        //}
     }
 
 
     // MODIFIES: this
     // EFFECTS: adds an item to the to-do list
     private void operationAddUrgent() throws ParseException, IOException {
-        UrgentItem urgentItem = new UrgentItem();
+        Item urgentItem = new UrgentItem();
 
 //        System.out.println("Enter the title:");
         String inputTitle = validInputTitle();
@@ -140,16 +146,16 @@ public class ToDoList implements Saveable, Loadable {
 
 
     // EFFECTS: checks whether the item is equal to any item already in toDoMap
-    private boolean isValidInputItem(Item item) {
-        for (Map.Entry<String, Item> entry : toDoMap.entrySet()) {
-            //String k = entry.getKey();
-            Item v = entry.getValue();
-            if (v.equals(item)) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    private boolean isValidInputItem(Item item) {
+//        for (Map.Entry<String, Item> entry : toDoMap.entrySet()) {
+//            //String k = entry.getKey();
+//            Item v = entry.getValue();
+//            if (v.equals(item)) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     // EFFECTS: returns a valid item such that we can save it into toDoMap or doneMap w/out causing errors/exceptions
     private Item validInputItem(Item item) throws ParseException {
@@ -262,12 +268,11 @@ public class ToDoList implements Saveable, Loadable {
 
     // EFFECTS: displays both do-list list and crossed-off list
     private void operationDisplay() {
-        //loadFile();
-        System.out.println("To-do list: ");
+        System.out.println("To-do list:");
         operationDisplayTodo();
-        System.out.println("School to-do's: ");
+        System.out.println("\r\r" + "School to-do's:");
         operationDisplaySchoolItems();
-        System.out.println("Crossed-off list: ");
+        System.out.println("\r\r" + "Crossed-off list: ");
         operationDisplayDone();
     }
 
@@ -293,7 +298,6 @@ public class ToDoList implements Saveable, Loadable {
         operationDisplayMap(doneMap);
     }
 
-    /************* refactored for semantic coupling *****************/
     private void operationDisplayMap(Map<String, Item> map) {
         map.forEach((k,i) -> System.out.println(k + ": " + i.printItem()));
     }
@@ -301,8 +305,13 @@ public class ToDoList implements Saveable, Loadable {
 
     // EFFECTS: saves ToDoList to /data/listData.txt
     @Override
-    public void saveToFile() {
+    public void saveToFile() throws FileNotFoundException, UnsupportedEncodingException {
+        PrintWriter writer = new PrintWriter(FILE_NAME,"UTF-8");
+
         toDoMap.forEach((k,i) -> {
+//            System.out.println("saving to todoMap...");
+//            System.out.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
+//                    + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool());
             writer.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
                     + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool());
         }
@@ -313,16 +322,16 @@ public class ToDoList implements Saveable, Loadable {
         writer.close();
     }
 
-    private void saveMap(Map<String, Item> map) {
-        map.forEach((k,i) -> writer.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
-                + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool()));
-    }
+//    private void saveMap(Map<String, Item> map) {
+//        map.forEach((k,i) -> writer.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
+//                + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool()));
+//    }
 
 
     // EFFECTS: loads info in /data/listData.txt to ToDoList
     @Override
     public void loadFile() throws IOException, ParseException {
-        List<String> lines = Files.readAllLines(Paths.get("./data/listData.txt"));
+        List<String> lines = Files.readAllLines(Paths.get(FILE_NAME));
         toDoMap.clear();
         doneMap.clear();
         schoolList.clearSchoolItems();
@@ -367,21 +376,17 @@ public class ToDoList implements Saveable, Loadable {
         Item urgentItem = new UrgentItem();
 
         if (Boolean.parseBoolean(pol.get(4))) {
-//            urgentItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
-            //doneMap.put(pol.get(0), setItemUp(pol, urgentItem));
-            putIntoMap(doneMap, pol, urgentItem);
+            urgentItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
+            doneMap.put(pol.get(0), urgentItem);
+            //putIntoMap(doneMap, pol, urgentItem);
         } else {
-//            regularItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
-            //doneMap.put(pol.get(0), setItemUp(pol, regularItem));
-            putIntoMap(doneMap, pol, regularItem);
+            regularItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
+            doneMap.put(pol.get(0), regularItem);
+            //putIntoMap(doneMap, pol, regularItem);
         }
     }
 
 
-    private Item setItemUp(ArrayList<String> pol, Item item) throws ParseException {
-        item.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
-        return item;
-    }
 
     private void putIntoMap(Map<String, Item> map, ArrayList<String> pol, Item item) throws ParseException {
         item.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
