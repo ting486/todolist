@@ -12,6 +12,7 @@ public class StockCodeCategory extends StockCodeComponent {
         stockCodeComponents = new ArrayList<>();
     }
 
+    // EFFECTS: iterates over stockCodeComponents and prints out stock info on each StockCodeComponent
     @Override
     public void print() throws IOException {
         for (StockCodeComponent scc : stockCodeComponents) {
@@ -19,10 +20,13 @@ public class StockCodeCategory extends StockCodeComponent {
         }
     }
 
+    // MODIFIES: stockCodeComponents
+    // EFFECTS: adds scc to stockCodeComponents
     public void addComponent(StockCodeComponent scc) {
         stockCodeComponents.add(scc);
     }
 
+    // EFFECTS: gets stockCodeComponents
     public List<StockCodeComponent> getStockCodeComponents() {
         return stockCodeComponents;
     }

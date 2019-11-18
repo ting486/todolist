@@ -1,9 +1,10 @@
 package ui;
 
 import model.Observer;
-import model.exceptions.*;
 import model.*;
-import network.ReadWebPage;
+import model.exceptions.EmptyContentException;
+import model.exceptions.InvalidCrossingOffException;
+import model.exceptions.SpecialSymbolException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,7 +15,6 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 
 
 public class ToDoList implements Saveable, Loadable {
@@ -30,12 +30,10 @@ public class ToDoList implements Saveable, Loadable {
     private static final String FILE_NAME = "./data/listData.txt";
     private static final String OPERATION_GREETING = "\r What would you like to do? \r\n 1: add a regular item \r\n "
             + "2: add an urgent item \r\n "
-            + "3: cross off an item \r\n 4: show all the items \r\n 5: quit \r\n Enter the number: ";
+            + "3: cross off an item \r\n 4: show all the items \r\n 5: quit";
 
 
-
-    // EFFECTS: constructs a new ToDoList
-    public ToDoList() throws FileNotFoundException, UnsupportedEncodingException {
+    public ToDoList() {
         scanner = new Scanner(System.in);
         toDoMap = new HashMap<>();
         doneMap = new HashMap<>();
@@ -68,6 +66,8 @@ public class ToDoList implements Saveable, Loadable {
             }
         }
     }
+
+
 
 
     // MODIFIES: this
@@ -104,7 +104,6 @@ public class ToDoList implements Saveable, Loadable {
     private void operationAddSchool() throws ParseException, IOException {
         Item regularItem = new RegularItem();
 
-//        System.out.println("Enter the title:");
         String inputTitle = validInputTitle();
         System.out.println("Enter the content (do NOT use the symbol '=='):");
         String inputContent = validInputContent();
@@ -115,9 +114,6 @@ public class ToDoList implements Saveable, Loadable {
 
         //Item validRegularItem = validInputItem(regularItem);
 
-//        if (regularItem.isInSchool()) {
-//            System.out.println("schoolList not null!!!");
-//        }
         //if (isValidInputItem(validRegularItem)) {
         regularItem.addSchoolList(schoolList);
         toDoMap.put(inputTitle, regularItem);
@@ -131,7 +127,6 @@ public class ToDoList implements Saveable, Loadable {
     private void operationAddUrgent() throws ParseException, IOException {
         Item urgentItem = new UrgentItem();
 
-//        System.out.println("Enter the title:");
         String inputTitle = validInputTitle();
 //        System.out.println("Enter the content: (do NOT use the symbol '==')");
 //        String inputContent = validInputContent();
@@ -309,9 +304,6 @@ public class ToDoList implements Saveable, Loadable {
         PrintWriter writer = new PrintWriter(FILE_NAME,"UTF-8");
 
         toDoMap.forEach((k,i) -> {
-//            System.out.println("saving to todoMap...");
-//            System.out.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
-//                    + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool());
             writer.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
                     + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool());
         }
@@ -321,11 +313,6 @@ public class ToDoList implements Saveable, Loadable {
                 + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool()));
         writer.close();
     }
-
-//    private void saveMap(Map<String, Item> map) {
-//        map.forEach((k,i) -> writer.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
-//                + i.getStatus() + "==" + i.getUrg() + "==" + i.isInSchool()));
-//    }
 
 
     // EFFECTS: loads info in /data/listData.txt to ToDoList
@@ -387,14 +374,13 @@ public class ToDoList implements Saveable, Loadable {
     }
 
 
+//    private void putIntoMap(Map<String, Item> map, ArrayList<String> pol, Item item) throws ParseException {
+//        item.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
+//        map.put(pol.get(0), item);
+//    }
 
-    private void putIntoMap(Map<String, Item> map, ArrayList<String> pol, Item item) throws ParseException {
-        item.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
-        map.put(pol.get(0), item);
-    }
 
-
-    // EFFECTS: splits line into a list of Strings, separated by "=="
+    // EFFECTS: splits line by '==' into an arraylist of Strings
     private ArrayList<String> splitByPart(String line) {
         String[] splits = line.split("==");
         return new ArrayList<>(Arrays.asList(splits));

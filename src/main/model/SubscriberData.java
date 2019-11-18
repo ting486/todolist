@@ -10,6 +10,7 @@ public class SubscriberData {
         this.name = name;
     }
 
+    // EFFECTS: gets name
     public String getName() {
         return name;
     }

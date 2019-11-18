@@ -13,19 +13,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SaveSample {
-    //ArrayList<String> sampleString = new ArrayList<>();
     public ToDoList sampleToDoItems = new ToDoList();
     private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    public SaveSample() throws IOException, ParseException {
+    public SaveSample() throws IOException {
     }
 
 
-
-
+    // MODIFIES: writer, ./data/testFileSave.txt
+    // EFFECTS: saves items to ./data/testFileSave.txt
     public void saveThisSample() throws IOException {
         PrintWriter writer = new PrintWriter("./data/testFileSave.txt","UTF-8");
-
 
         sampleToDoItems.toDoMap.forEach((k,i) -> {
             writer.println(k + "==" + i.getContent() + "==" + formatter.format(i.getDue()) + "=="
@@ -42,32 +40,8 @@ public class SaveSample {
         writer.close();
     }
 
-
-    /*
-    public ToDoList loadSavedSample() throws IOException, ParseException {
-        List<String> lines = Files.readAllLines(Paths.get("./data/testFileSave.txt"));
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        sampleToDoItems.toDoList.clear();
-        sampleToDoItems.doneList.clear();
-
-        for (String line : lines) {
-            ArrayList<String> partsOfLine = splitByPart(line);
-            RegularItem regularItem = new RegularItem();
-
-            int indexNum = Integer.parseInt(partsOfLine.get(0));
-            regularItem.setContent(partsOfLine.get(1));
-            regularItem.setDue(formatter.parse(partsOfLine.get(2)));
-            regularItem.setStatus(Boolean.parseBoolean(partsOfLine.get(3)));
-            if (indexNum < 1000) {
-                sampleToDoItems.toDoList.add(regularItem);
-            } else {
-                sampleToDoItems.doneList.add(regularItem);
-            }
-        }
-        return sampleToDoItems;
-    }
-     */
-
+    // MODIFIES: sampleToDoItems
+    // EFFECTS: loads items to ./data/testFileSave.txt
     public ToDoList loadFile() throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get("./data/testFileSave.txt"));
         sampleToDoItems.toDoMap.clear();
@@ -86,7 +60,7 @@ public class SaveSample {
         return sampleToDoItems;
     }
 
-    public void loadToToDo(ArrayList<String> pol) throws ParseException {
+    private void loadToToDo(ArrayList<String> pol) throws ParseException {
         RegularItem regularItem = new RegularItem();
         UrgentItem urgentItem = new UrgentItem();
 
@@ -106,7 +80,7 @@ public class SaveSample {
         }
     }
 
-    public void loadToDone(ArrayList<String> pol) throws ParseException {
+    private void loadToDone(ArrayList<String> pol) throws ParseException {
         Item regularItem = new RegularItem();
         Item urgentItem = new UrgentItem();
 
@@ -119,7 +93,7 @@ public class SaveSample {
         }
     }
 
-
+    // EFFECTS: splits line by '==' into an arraylist of strings
     public static ArrayList<String> splitByPart(String line) {
         String[] splits = line.split("==");
         return new ArrayList<>(Arrays.asList(splits));

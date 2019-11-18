@@ -9,5 +9,6 @@ public abstract class StockCodeComponent {
         this.name = name;
     }
 
+    // EFFECTS: prints out stock info
     public abstract void print() throws IOException;
 }

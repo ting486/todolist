@@ -10,6 +10,7 @@ public class StockCode extends StockCodeComponent {
         super(codeName);
     }
 
+    // EFFECTS: prints out brief stock info on this stock code
     @Override
     public void print() throws IOException {
         ReadWebPage rwp = new ReadWebPage();

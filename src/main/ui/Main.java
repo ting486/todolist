@@ -2,21 +2,36 @@ package ui;
 
 import model.StockCode;
 import model.StockCodeCategory;
-import network.ReadWebPage;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.text.ParseException;
 
 
-public class Main {
-    public static void main(String[] args) throws IOException, ParseException {
-        ToDoList runThisList = new ToDoList();
-        //ReadWebPage readWebPage = new ReadWebPage();
-        StockCodeManager stockCodeManager = new StockCodeManager("stock code manager");
+public class Main extends JFrame {
 
-        //readWebPage.readUrl("AAPL");
+    public static final int WIDTH = 1000;
+    public static final int HEIGHT = 600;
+
+    public Main() throws IOException, ParseException {
+        super("To Do List Application");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        DisplayPanel dp = new DisplayPanel();
+        add(dp);
+        pack();
+        setVisible(true);
+    }
+
+    public static void main(String[] args) throws IOException, ParseException {
+        StockCodeManager stockCodeManager = new StockCodeManager("stock code manager");
         generateStockCodeManager(stockCodeManager).print();
-        runThisList.run();
+
+        //ToDoList runThisList = new ToDoList();
+        //runThisList.run();
+
+        new Main();
     }
 
     private static StockCodeManager generateStockCodeManager(StockCodeManager scm) {
@@ -32,5 +47,6 @@ public class Main {
 
         return scm;
     }
+
 }
 

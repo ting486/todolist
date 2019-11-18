@@ -11,12 +11,9 @@ public abstract class Item {
     protected boolean urgency;
     protected SchoolList schoolList;
     public static final String FORMATTER_PATTERN = "dd/MM/yyyy";
-    public SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER_PATTERN);    // I moved formatter s.t. it is
-                                                                                    // a field of Item, which reduces
-                                                                                    // hard coding
+    public SimpleDateFormat formatter = new SimpleDateFormat(FORMATTER_PATTERN);
 
 
-    // EFFECTS: creates an empty Item
     public Item() {
         this.content = null;
         this.due = null;
@@ -81,13 +78,12 @@ public abstract class Item {
 
     // EFFECTS: prints out the info of a to-do item in the form of a sentence
     public String printItem() {
-        if (status == true) {
+        if (status) {
             return (content + " is due on " + formatter.format((due)) + ". Completed!");
         } else {
             return (content + " is due on " + formatter.format((due)) + ". Not completed :(");
         }
     }
-
 
     // MODIFIES: this, sl
     // EFFECTS: adds sl to schoolList
@@ -110,11 +106,7 @@ public abstract class Item {
 
     // EFFECTS: returns true if getSchoolList() is not null
     public boolean isInSchool() {
-        if (getSchoolList() != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return getSchoolList() != null;
     }
 
 

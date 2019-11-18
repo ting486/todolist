@@ -15,7 +15,6 @@ import com.google.gson.JsonParser;
 
 
 public class ReadWebPage {
-//    public static List<String> printed = new ArrayList<>();
 
     public ReadWebPage() {
 
@@ -24,7 +23,6 @@ public class ReadWebPage {
     public void readUrl(String stockCode) throws IOException {
         // cred: https://stackoverflow.com/questions/4308554/simplest-way-to-read-json-from-a-url-in-java
 
-//        String stockCode = "AAPL";
         String myUrl = "https://financialmodelingprep.com/api/v3/company/profile/" + stockCode;
         URL url = new URL(myUrl);
         URLConnection request = url.openConnection();
@@ -39,17 +37,7 @@ public class ReadWebPage {
 
         String toPrint = "Simple stock information for " + stockCode + " right now: \n"
                 + "price: $" + price + "\n" + "change in percentage: " + changesPercentage;
-
-//        System.out.println("Simple stock information for " + stockCode + " right now: ");
-//        System.out.println("price: $" + price);
-//        System.out.println("change in percentage: " + changesPercentage);
         System.out.println(toPrint);
-
-//        printed.add(toPrint);
     }
-
-//    public static List<String> getPrinted() {
-//        return printed;
-//    }
 
 }

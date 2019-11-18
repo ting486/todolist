@@ -2,7 +2,6 @@ package model;
 
 public class RegularItem extends Item {
 
-    // EFFECTS: creates a new RegularItem
     public RegularItem() {
         super();
         this.urgency = false;

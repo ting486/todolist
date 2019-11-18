@@ -7,7 +7,6 @@ import java.util.List;
 public class SchoolList extends Subject {
     public List<Item> schoolItems;
 
-    // EFFECTS: constructs a SchoolList
     public SchoolList() {
         super();
         schoolItems = new ArrayList<>();
@@ -19,7 +18,6 @@ public class SchoolList extends Subject {
         if (!schoolItems.contains(i)) {
             schoolItems.add(i);
             i.addSchoolList(this);
-            //notifyObservers(i);
         }
     }
 
@@ -37,7 +35,8 @@ public class SchoolList extends Subject {
         return schoolItems;
     }
 
-    // EFFECTS: clears schoolItems
+    // MODIFIES: schoolItems
+    // EFFECTS: empties schoolItems
     public void clearSchoolItems() {
         schoolItems.clear();
     }

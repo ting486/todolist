@@ -21,11 +21,10 @@ public class LoadSample {
     }
 
 
+    // MODIFIES: sampleToDoItems
+    // EFFECTS: loads items to ./data/testFileLoad.txt
     public ToDoList loadFile() throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get("./data/testFileLoad.txt"));
-        //SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-//        sampleToDoItems.toDoItems.clear();
-//        sampleToDoItems.doneItems.clear();
         sampleToDoItems.toDoMap.clear();
         sampleToDoItems.doneMap.clear();
         sampleToDoItems.schoolList.clearSchoolItems();
@@ -33,14 +32,6 @@ public class LoadSample {
 
         for (String line : lines) {
             ArrayList<String> partsOfLine = splitByPart(line);
-//            Item regularItem = new RegularItem();
-//            Item urgentItem = new UrgentItem();
-
-//            if (Integer.parseInt(partsOfLine.get(0)) < 1000) {
-//                loadToToDo(partsOfLine);
-//            } else {
-//                loadToDone(partsOfLine);
-//            }
 
             if (!Boolean.parseBoolean(partsOfLine.get(3))) {
                 loadToToDo(partsOfLine);
@@ -51,20 +42,9 @@ public class LoadSample {
         return sampleToDoItems;
     }
 
-    public void loadToToDo(ArrayList<String> pol) throws ParseException {
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private void loadToToDo(ArrayList<String> pol) throws ParseException {
         RegularItem regularItem = new RegularItem();
         UrgentItem urgentItem = new UrgentItem();
-//        Boolean status = Boolean.parseBoolean(partsOfLine.get(3));
-//        Boolean urgency = Boolean.parseBoolean(partsOfLine.get(4));
-
-//        if (urgency == true) {
-//            urgentItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
-//            sampleToDoItems.toDoItems.add(urgentItem);
-//        } else {
-//            regularItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
-//            sampleToDoItems.toDoItems.add(regularItem);
-//        }
 
         if (Boolean.parseBoolean(pol.get(4))) {
             urgentItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
@@ -83,20 +63,9 @@ public class LoadSample {
         }
     }
 
-    public void loadToDone(ArrayList<String> pol) throws ParseException {
-//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    private void loadToDone(ArrayList<String> pol) throws ParseException {
         Item regularItem = new RegularItem();
         Item urgentItem = new UrgentItem();
-//        Boolean status = Boolean.parseBoolean(partsOfLine.get(3));
-//        Boolean urgency = Boolean.parseBoolean(partsOfLine.get(4));
-
-//        if (urgency == true) {
-//            urgentItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
-//            sampleToDoItems.doneItems.add(urgentItem);
-//        } else {
-//            regularItem.setThis(partsOfLine.get(1), formatter.parse(partsOfLine.get(2)), status);
-//            sampleToDoItems.doneItems.add(regularItem);
-//        }
 
         if (Boolean.parseBoolean(pol.get(4))) {
             urgentItem.setThis(pol.get(1), formatter.parse(pol.get(2)), Boolean.parseBoolean(pol.get(3)));
@@ -107,6 +76,7 @@ public class LoadSample {
         }
     }
 
+    // EFFECTS: splits line by '==' into an arraylist of strings
     public static ArrayList<String> splitByPart(String line) {
         String[] splits = line.split("==");
         return new ArrayList<>(Arrays.asList(splits));
