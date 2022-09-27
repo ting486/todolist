@@ -11,7 +11,7 @@ import java.text.ParseException;
 
 public class Main extends JFrame {
 
-    public static final int WIDTH = 1000;
+    public static final int WIDTH = 1100;
     public static final int HEIGHT = 600;
 
     public Main() throws IOException, ParseException {
